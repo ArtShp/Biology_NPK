@@ -1,3 +1,5 @@
+from email.policy import default
+
 from config import *
 from functions import *
 
@@ -25,3 +27,12 @@ for row in s:
 
 
 print(matrix)
+
+
+
+
+a = {default: '3'}
+print(a[5])
+
+
+
