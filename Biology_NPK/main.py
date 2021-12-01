@@ -3,10 +3,11 @@ from email.policy import default
 from config import *
 from functions import *
 
-s1 = 'CCA'
-s2 = 'CCAG'
+s1 = 'CCAAGGCT'
+s2 = 'CCAGAGAC'
 
-#sequence_global_alignment(s1, s2)
+sequence_global_alignment(s1, s2)
+"""
 f = open('../sys/blosum62.txt', 'r+')
 s = f.read()
 s = s.strip().split('\n')
@@ -27,12 +28,8 @@ for row in s:
 
 
 print(matrix)
-
-
-
-
 a = {default: '3'}
 print(a[5])
-
+"""
 
 
