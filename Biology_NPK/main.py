@@ -1,4 +1,5 @@
 from config import *
+from exceptions import *
 from functions import *
 
 score_mode = 1

@@ -1,9 +1,11 @@
 from config import *
+from exceptions import *
 from typing import Optional
 import numpy as np
 
 
 # TODO -> Добавить комментарии в функции
+# TODO -> Обработка ошибок(кастомных)
 def count_cell_score(s1: str, s2: str, mode: int = 0) -> Optional[int]:
     """Функция для подсчёта стоимости текущей ячейки."""
 
