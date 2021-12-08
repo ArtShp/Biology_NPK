@@ -1,12 +1,12 @@
-from email.policy import default
-
 from config import *
 from functions import *
+
+score_mode = 1
 
 s1 = 'CCAAGGCT'
 s2 = 'CCAGAGAC'
 
-sequence_global_alignment(s1, s2)
+sequence_global_alignment(s1, s2, score_mode)
 """
 f = open('../sys/blosum62.txt', 'r+')
 s = f.read()
