@@ -6,7 +6,8 @@ score_mode = 1
 s1 = 'CCAAGGCT'
 s2 = 'CCAGAGAC'
 
-sequence_global_alignment(s1, s2, score_mode)
+res = sequence_global_alignment(s1, s2, score_mode)
+print(res)
 """
 f = open('../sys/blosum62.txt', 'r+')
 s = f.read()
