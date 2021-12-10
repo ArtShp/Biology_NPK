@@ -93,7 +93,33 @@ def sequence_global_alignment(s1: str, s2: str, mode: int = 0) -> Optional[int]:
     return table[len(s1)][len(s2)]
 
 
-def sequence_local_alignment(s1, s2):
+def sequence_local_alignment(s1: str, s2: str, mode: int = 0) -> Optional[int]:
     """Функция глокального выравнивания двух генетических цепочек
        по алгоритму Смита-Ватермана"""
-    pass
+
+    # TODO -> Сделать список в конфиге возможных таблиц выравнивания(режимов)(Возможно) + режими - не номера, а слова[Union]
+    if mode not in [0, 1]:
+        # TODO -> Делать что-то другое. Возможно добавить свой обработчик ошибок!
+        return None
+
+    table = [[0 for k in range(len(s2)+1)] for i in range(len(s1)+1)]
+
+    table[0][0] = 0
+    for i in range(1, len(s1)+1):
+        table[i][0] = 0
+    for j in range(1, len(s2)+1):
+        table[0][j] = 0
+
+    res = 0
+
+    for i in range(1, len(s1)+1):
+        for j in range(1, len(s2)+1):
+            table[i][j] = max(0,
+                              table[i-1][j] + count_cell_score(s1[i - 1], '*', mode),
+                              table[i][j-1] + count_cell_score('*', s2[j - 1], mode),
+                              table[i-1][j-1] + count_cell_score(s1[i - 1], s2[j - 1], mode))
+            if table[i][j] > res:
+                res = table[i][j]
+
+    print(np.matrix(table))
+    return res

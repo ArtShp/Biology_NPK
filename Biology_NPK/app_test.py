@@ -9,7 +9,7 @@ class Window(QMainWindow):
         super(Window, self).__init__()
 
         self.setWindowTitle('Title')
-        self.setGeometry(0, 0, 1280, 720)
+        self.setGeometry(0, 0, 500, 500)
 
 
 def application():
