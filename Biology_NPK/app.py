@@ -14,6 +14,26 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from functions import *
 from exceptions import *
 from config import *
+from time import sleep
+
+
+class CalcThread(QtCore.QThread):
+    def __init__(self, s1, s2, align_func, mode):
+        QtCore.QThread.__init__(self)
+        self.s1 = s1
+        self.s2 = s2
+        self.align_func = align_func
+        self.mode = mode
+        self.res = ''
+
+    def __del__(self):
+        self.wait()
+
+    def run(self):
+        if self.align_func == 0:
+            self.res = sequence_global_alignment(self.s1, self.s2, self.mode)
+        elif self.align_func == 1:
+            self.res = sequence_local_alignment(self.s1, self.s2, self.mode)
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -166,6 +186,8 @@ class Ui_MainWindow(object):
         self.choice_box_2.addItem("")
         self.choice_box_2.addItem("")
 
+        self.calc_thread = CalcThread('', '', 0, 0)
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -181,12 +203,21 @@ class Ui_MainWindow(object):
 
     def count_align(self):
         res = ''
+
+        self.status.setText('Статус: В процессе.')
+        self.status.repaint()
+
+        self.calc_thread = CalcThread(self.s1, self.s2, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex())
+        self.calc_thread.start()
+
+        """
         if self.choice_box_1.currentIndex() == 0:
             res = sequence_global_alignment(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_2.currentIndex())
         elif self.choice_box_1.currentIndex() == 1:
             res = sequence_local_alignment(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_2.currentIndex())
+        """
 
-        print(res)
+        self.status.setText('Статус: Завершено!')
 
         data = [self.s1.toPlainText(), self.s2.toPlainText(), res]
 
@@ -195,7 +226,6 @@ class Ui_MainWindow(object):
 
     def show_results(self, data):
         self.model.addRow(data)
-
         self.table.setModel(self.model)
 
         self.table.resizeColumnsToContents()
@@ -205,7 +235,6 @@ class Ui_MainWindow(object):
     def clear_table(self):
         self.model.clear()
 
-
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -214,7 +243,7 @@ class Ui_MainWindow(object):
         self.count_bt.setText(_translate("MainWindow", "Посчитать"))
         self.s1_sign.setText(_translate("MainWindow", "<html><head/><body><p>Последовательность 1</p></body></html>"))
         self.s2_sign.setText(_translate("MainWindow", "Последовательность 2"))
-        self.status.setText(_translate("MainWindow", "Статус: работа не начата"))
+        self.status.setText(_translate("MainWindow", "Статус: Работа не начата."))
         self.align_tab.setTabText(self.align_tab.indexOf(self.tab_1), _translate("MainWindow", "1 + 1"))
         self.infile_bt.setText(_translate("MainWindow", "Выбрать файл"))
         self.count_bt_2.setText(_translate("MainWindow", "Посчитать"))

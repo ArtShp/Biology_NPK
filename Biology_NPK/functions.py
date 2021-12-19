@@ -1,7 +1,6 @@
 from config import *
 from exceptions import *
 from typing import Optional
-import numpy as np
 
 
 # TODO -> Добавить комментарии в функции
