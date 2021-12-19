@@ -16,7 +16,7 @@ def count_cell_score(s1: str, s2: str, mode: int = 0) -> Optional[int]:
         # TODO -> Делать что-то другое. Возможно добавить свой обработчик ошибок!
         return None
 
-    if mode == 0:
+    if mode == 1:
         """Используем базовую схему"""
         if '*' in [s1, s2]:
             return -1
@@ -24,7 +24,7 @@ def count_cell_score(s1: str, s2: str, mode: int = 0) -> Optional[int]:
             return 1
         else:
             return -1
-    elif mode == 1:
+    elif mode == 0:
         """Используем BLOSUM62"""
         # TODO -> Хранить в коде не как словарь, а выгружать из файла(Возможно)
         # TODO -> Добавить значение по умолчанию!
