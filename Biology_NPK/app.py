@@ -20,16 +20,13 @@ class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, data):
         super(TableModel, self).__init__()
 
-
         self.horizontalHeaders = [''] * 3
 
         self.setHeaderData(0, Qt.Horizontal, 'Последовательность 1')
         self.setHeaderData(1, Qt.Horizontal, 'Последовательность 2')
         self.setHeaderData(2, Qt.Horizontal, 'Результат')
 
-
         self._data = data
-
 
     def data(self, index, role):
         if role == Qt.DisplayRole:
@@ -44,6 +41,9 @@ class TableModel(QtCore.QAbstractTableModel):
     def addRow(self, row):
         self._data.append(row)
         self.layoutChanged.emit()
+
+    def clear(self):
+        self._data = []
 
     def setHeaderData(self, section, orientation, data, role=Qt.EditRole):
         if orientation == Qt.Horizontal and role in (Qt.DisplayRole, Qt.EditRole):
@@ -149,8 +149,12 @@ class Ui_MainWindow(object):
 
         self.table = QtWidgets.QTableView(self.centralwidget)
         self.table.setEnabled(True)
-        self.table.setGeometry(QtCore.QRect(0, 170, 711, 192))
+        self.table.setMinimumSize(700, 50)
+        self.table.setMaximumSize(700, 200)
+        self.table.setGeometry(QtCore.QRect(0, 170, self.table.minimumWidth(), self.table.minimumHeight()))
         self.table.setObjectName("table")
+
+        self.model = TableModel([])
 
         self.write_file_bt = QtWidgets.QPushButton(self.centralwidget)
         self.write_file_bt.setGeometry(QtCore.QRect(10, 370, 91, 23))
@@ -184,26 +188,22 @@ class Ui_MainWindow(object):
 
         print(res)
 
-        self.show_results()
+        data = [self.s1.toPlainText(), self.s2.toPlainText(), res]
 
-    def show_results(self):
-        data = [['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3],
-                ['a', 'b', 3]]
+        self.clear_table()
+        self.show_results(data)
 
+    def show_results(self, data):
+        self.model.addRow(data)
 
-        self.model = TableModel(data)
         self.table.setModel(self.model)
 
-        self.model.addRow(['1', '2', 'XYZ'])
-
         self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self.table.adjustSize()
+
+    def clear_table(self):
+        self.model.clear()
 
 
     def retranslateUi(self, MainWindow):

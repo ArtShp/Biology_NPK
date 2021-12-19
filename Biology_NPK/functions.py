@@ -87,7 +87,7 @@ def sequence_global_alignment(s1: str, s2: str, mode: int = 0) -> Optional[int]:
                               table[i][j-1] + count_cell_score('*', s2[j - 1], mode),
                               table[i-1][j-1] + count_cell_score(s1[i - 1], s2[j - 1], mode))
 
-    print(np.matrix(table))
+    # print(np.matrix(table))
     # print(table[len(s1)][len(s2)])
 
     return table[len(s1)][len(s2)]
@@ -121,5 +121,5 @@ def sequence_local_alignment(s1: str, s2: str, mode: int = 0) -> Optional[int]:
             if table[i][j] > res:
                 res = table[i][j]
 
-    print(np.matrix(table))
+    # print(np.matrix(table))
     return res
