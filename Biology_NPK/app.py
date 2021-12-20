@@ -18,22 +18,37 @@ from time import sleep
 
 
 class CalcThread(QtCore.QThread):
-    def __init__(self, s1, s2, align_func, mode):
-        QtCore.QThread.__init__(self)
+    #running = False
+
+    def __init__(self, s1, s2, align_func, mode, window, parent=None):
+        super(CalcThread, self).__init__(parent)
         self.s1 = s1
         self.s2 = s2
         self.align_func = align_func
         self.mode = mode
+        self.window = window
         self.res = ''
 
     def __del__(self):
-        self.wait()
+        #self.wait()
+        pass
 
     def run(self):
+        self.window.status.setText('Статус: В процессе.')
+        self.window.status.repaint()
+
         if self.align_func == 0:
             self.res = sequence_global_alignment(self.s1, self.s2, self.mode)
         elif self.align_func == 1:
             self.res = sequence_local_alignment(self.s1, self.s2, self.mode)
+
+        self.window.status.setText('Статус: Завершено!')
+
+        data = [self.s1, self.s2, self.res]
+
+        self.window.clear_table()
+        self.window.show_results(data)
+
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -186,7 +201,7 @@ class Ui_MainWindow(object):
         self.choice_box_2.addItem("")
         self.choice_box_2.addItem("")
 
-        self.calc_thread = CalcThread('', '', 0, 0)
+        #self.calc_thread = CalcThread('', '', 0, 0)
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -202,29 +217,15 @@ class Ui_MainWindow(object):
         self.count_bt.clicked.connect(self.count_align)
 
     def count_align(self):
-        res = ''
-
-        self.status.setText('Статус: В процессе.')
-        self.status.repaint()
-
-        self.calc_thread = CalcThread(self.s1, self.s2, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex())
+        self.calc_thread = CalcThread(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self)
         self.calc_thread.start()
 
-        """
-        if self.choice_box_1.currentIndex() == 0:
-            res = sequence_global_alignment(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_2.currentIndex())
-        elif self.choice_box_1.currentIndex() == 1:
-            res = sequence_local_alignment(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_2.currentIndex())
-        """
-
-        self.status.setText('Статус: Завершено!')
-
-        data = [self.s1.toPlainText(), self.s2.toPlainText(), res]
-
-        self.clear_table()
-        self.show_results(data)
-
     def show_results(self, data):
+        if len(data[0]) > 35:
+            data[0] = data[0][:35]+'...'
+        if len(data[1]) > 35:
+            data[1] = data[1][:35]+'...'
+
         self.model.addRow(data)
         self.table.setModel(self.model)
 
