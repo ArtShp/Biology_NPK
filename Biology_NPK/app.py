@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QTableWidgetItem
 from functions import *
 from exceptions import *
 from config import *
+from xlsxwriter import Workbook
 from time import sleep
 
 
@@ -29,13 +30,12 @@ class CalcThread(QtCore.QThread):
         self.window = window
         self.res = ''
 
-    def __del__(self):
-        #self.wait()
-        pass
+    def stop(self):
+        self.wait()
 
     def run(self):
         self.window.status.setText('Статус: В процессе.')
-        self.window.status.repaint()
+        #self.window.status.repaint()
 
         if self.align_func == 0:
             self.res = sequence_global_alignment(self.s1, self.s2, self.mode)
@@ -46,14 +46,19 @@ class CalcThread(QtCore.QThread):
 
         data = [self.s1, self.s2, self.res]
 
-        self.window.clear_table()
+        #self.window.clear_table()
         self.window.show_results(data)
+
+        #self.quit()
+        #self.stop()
 
 
 
 class TableModel(QtCore.QAbstractTableModel):
-    def __init__(self, data):
+    def __init__(self):
         super(TableModel, self).__init__()
+
+        self.length = 35
 
         self.horizontalHeaders = [''] * 3
 
@@ -61,11 +66,17 @@ class TableModel(QtCore.QAbstractTableModel):
         self.setHeaderData(1, Qt.Horizontal, 'Последовательность 2')
         self.setHeaderData(2, Qt.Horizontal, 'Результат')
 
-        self._data = data
+        self._full_data = []
+        self._data = []
+
+
 
     def data(self, index, role):
         if role == Qt.DisplayRole:
             return self._data[index.row()][index.column()]
+
+    def get_data(self):
+        return self._full_data
 
     def rowCount(self, index):
         return len(self._data)
@@ -73,12 +84,25 @@ class TableModel(QtCore.QAbstractTableModel):
     def columnCount(self, index):
         return 3
 
-    def addRow(self, row):
-        self._data.append(row)
+    def addRow(self, data):
+        self._full_data.append(data)
+        self._data.append([])
+
+        if len(data[0]) <= self.length:
+            self._data[-1].append(data[0])
+        else:
+            self._data[-1].append(data[0][:self.length] + '...')
+        if len(data[1]) <= self.length:
+            self._data[-1].append(data[1])
+        else:
+            self._data[-1].append(data[1][:self.length] + '...')
+        self._data[-1].append(data[2])
+
         self.layoutChanged.emit()
 
     def clear(self):
         self._data = []
+        self._full_data = []
 
     def setHeaderData(self, section, orientation, data, role=Qt.EditRole):
         if orientation == Qt.Horizontal and role in (Qt.DisplayRole, Qt.EditRole):
@@ -189,7 +213,7 @@ class Ui_MainWindow(object):
         self.table.setGeometry(QtCore.QRect(0, 170, self.table.minimumWidth(), self.table.minimumHeight()))
         self.table.setObjectName("table")
 
-        self.model = TableModel([])
+        self.model = TableModel()
 
         self.write_file_bt = QtWidgets.QPushButton(self.centralwidget)
         self.write_file_bt.setGeometry(QtCore.QRect(10, 370, 91, 23))
@@ -215,17 +239,16 @@ class Ui_MainWindow(object):
 
     def add_actions(self):
         self.count_bt.clicked.connect(self.count_align)
+        self.write_file_bt.clicked.connect(self.write_file)
 
     def count_align(self):
         self.calc_thread = CalcThread(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self)
         self.calc_thread.start()
+        #while self.status.text() != "Статус: Завершено!":
+        #    pass
+        #self.calc_thread.exit()
 
     def show_results(self, data):
-        if len(data[0]) > 35:
-            data[0] = data[0][:35]+'...'
-        if len(data[1]) > 35:
-            data[1] = data[1][:35]+'...'
-
         self.model.addRow(data)
         self.table.setModel(self.model)
 
@@ -235,6 +258,45 @@ class Ui_MainWindow(object):
 
     def clear_table(self):
         self.model.clear()
+
+    def write_file(self):
+        f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
+        #f_name = QtWidgets.QFileDialog.getSaveFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
+        if f_name != '':
+            data = self.model.get_data()
+            print(data)
+
+            wb = Workbook(f_name)
+            ws1 = wb.add_worksheet('Shorted')
+            #ws2 = wb.add_worksheet('Full')
+
+            title_f = wb.add_format({'font_size': 18, 'align': 'center'})
+            subtitle_f = wb.add_format({'font_size': 14, 'align': 'center'})
+            #data_f = wb.add_format({'align': 'center'})
+            data_f = wb.add_format({})
+
+            ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
+            #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
+
+            ws1.merge_range('A2:F2', 'Последовательность 1', subtitle_f)
+            ws1.merge_range('G2:L2', 'Последовательность 2', subtitle_f)
+            ws1.merge_range('M2:N2', 'Результат', subtitle_f)
+
+            for i in range(len(data)):
+                if len(data[i][0]) <= 50:
+                    ws1.merge_range(f'A{3+i}:F{3+i}', data[i][0], data_f)
+                else:
+                    ws1.merge_range(f'A{3+i}:F{3+i}', data[i][0][:50]+'...', data_f)
+                if len(data[i][1]) <= 50:
+                    ws1.merge_range(f'G{3+i}:L{3+i}', data[i][1], data_f)
+                else:
+                    ws1.merge_range(f'G{3+i}:L{3+i}', data[i][1][:50] + '...', data_f)
+                ws1.merge_range(f'M{3+i}:N{3+i}', data[i][2], data_f)
+
+            wb.close()
+        else:
+            print('Error')
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
