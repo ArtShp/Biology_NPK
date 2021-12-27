@@ -21,14 +21,20 @@ from time import sleep
 class CalcThread(QtCore.QThread):
     #running = False
 
-    def __init__(self, s1, s2, align_func, mode, window, parent=None):
+    def __init__(self, window, multi_oper=False, parent=None):
         super(CalcThread, self).__init__(parent)
-        self.s1 = s1
-        self.s2 = s2
-        self.align_func = align_func
-        self.mode = mode
+        self.multi_operation = multi_oper
+
+        self.align_func = window.choice_box_1.currentIndex()
+        self.mode = window.choice_box_2.currentIndex()
         self.window = window
         self.res = ''
+        if not multi_oper:
+            self.s1 = window.s1.toPlainText()
+            self.s2 = window.s2.toPlainText()
+        else:
+            self.s1 = window.s.toPlainText()
+            self.s2 = ''
 
     def stop(self):
         self.wait()
@@ -55,8 +61,8 @@ class CalcThread(QtCore.QThread):
 
 
 class TableModel(QtCore.QAbstractTableModel):
-    def __init__(self):
-        super(TableModel, self).__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         self.length = 35
 
@@ -69,8 +75,6 @@ class TableModel(QtCore.QAbstractTableModel):
         self._full_data = []
         self._data = []
 
-
-
     def data(self, index, role):
         if role == Qt.DisplayRole:
             return self._data[index.row()][index.column()]
@@ -78,10 +82,10 @@ class TableModel(QtCore.QAbstractTableModel):
     def get_data(self):
         return self._full_data
 
-    def rowCount(self, index):
+    def rowCount(self, parent=None):
         return len(self._data)
 
-    def columnCount(self, index):
+    def columnCount(self, parent=None):
         return 3
 
     def addRow(self, data):
@@ -239,14 +243,20 @@ class Ui_MainWindow(object):
 
     def add_actions(self):
         self.count_bt.clicked.connect(self.count_align)
+        self.count_bt_2.clicked.connect(self.test)
         self.write_file_bt.clicked.connect(self.write_file)
 
+    def test(self):
+        self.model.addRow(['AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'BBB', 100])
+        self.table.setModel(self.model)
+
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self.table.adjustSize()
+
     def count_align(self):
-        self.calc_thread = CalcThread(self.s1.toPlainText(), self.s2.toPlainText(), self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self)
+        self.calc_thread = CalcThread(self, False)
         self.calc_thread.start()
-        #while self.status.text() != "Статус: Завершено!":
-        #    pass
-        #self.calc_thread.exit()
 
     def show_results(self, data):
         self.model.addRow(data)
@@ -264,7 +274,6 @@ class Ui_MainWindow(object):
         #f_name = QtWidgets.QFileDialog.getSaveFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
         if f_name != '':
             data = self.model.get_data()
-            print(data)
 
             wb = Workbook(f_name)
             ws1 = wb.add_worksheet('Shorted')
