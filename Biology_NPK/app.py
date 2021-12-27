@@ -278,20 +278,23 @@ class Ui_MainWindow(object):
             ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
             #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
 
-            ws1.merge_range('A2:F2', 'Последовательность 1', subtitle_f)
-            ws1.merge_range('G2:L2', 'Последовательность 2', subtitle_f)
-            ws1.merge_range('M2:N2', 'Результат', subtitle_f)
+            ws1.merge_range('A2:G2', 0, subtitle_f)
+            ws1.merge_range('H2:N2', 0, subtitle_f)
+
+            ws1.merge_range('A3:F3', 'Последовательность 1', subtitle_f)
+            ws1.merge_range('G3:L3', 'Последовательность 2', subtitle_f)
+            ws1.merge_range('M3:N3', 'Результат', subtitle_f)
 
             for i in range(len(data)):
                 if len(data[i][0]) <= 50:
-                    ws1.merge_range(f'A{3+i}:F{3+i}', data[i][0], data_f)
+                    ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0], data_f)
                 else:
-                    ws1.merge_range(f'A{3+i}:F{3+i}', data[i][0][:50]+'...', data_f)
+                    ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0][:50]+'...', data_f)
                 if len(data[i][1]) <= 50:
-                    ws1.merge_range(f'G{3+i}:L{3+i}', data[i][1], data_f)
+                    ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1], data_f)
                 else:
-                    ws1.merge_range(f'G{3+i}:L{3+i}', data[i][1][:50] + '...', data_f)
-                ws1.merge_range(f'M{3+i}:N{3+i}', data[i][2], data_f)
+                    ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1][:50] + '...', data_f)
+                ws1.merge_range(f'M{4+i}:N{4+i}', data[i][2], data_f)
 
             wb.close()
         else:
