@@ -35,20 +35,46 @@ class CalcHandler(QtCore.QObject):
                 s1 = self.data[3]
                 s2 = self.data[4]
 
-                self.change_status.emit(0, False)
-
                 res = 0
+
+                self.change_status.emit(0, False)
 
                 if align_func == 0:
                     res = sequence_global_alignment(s1, s2, align_mode)
                 elif align_func == 1:
                     res = sequence_local_alignment(s1, s2, align_mode)
 
-                self.change_status.emit(1, False)
-
                 self.show_data.emit([s1, s2, res])
+
+                self.change_status.emit(1, False)
             else:
-                pass
+                align_func = self.data[1]
+                align_mode = self.data[2]
+                s1 = self.data[3]
+                input_file_path = self.data[4]
+                file = open(input_file_path, 'r+')
+
+                data = file.readlines()
+                data_amount = len(data)
+
+                res = 0
+
+                self.change_status.emit(0, True)
+
+                for i in range(data_amount):
+                    if i+1 != data_amount:
+                        s2 = data[i][:-1]
+                    else:
+                        s2 = data[i]
+
+                    if align_func == 0:
+                        res = sequence_global_alignment(s1, s2, align_mode)
+                    elif align_func == 1:
+                        res = sequence_local_alignment(s1, s2, align_mode)
+
+                    self.show_data.emit([s1, s2, res])
+
+                self.change_status.emit(1, True)
 
     @QtCore.pyqtSlot(list)
     def get_data(self, data):
@@ -233,6 +259,8 @@ class Ui_MainWindow(QMainWindow):
 
         self.is_running = False
 
+        self.input_file = ''
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -246,6 +274,7 @@ class Ui_MainWindow(QMainWindow):
     def add_actions(self):
         self.count_bt.clicked.connect(lambda: self.count_align(0))
         self.count_bt_2.clicked.connect(lambda: self.count_align(1))
+        self.infile_bt.clicked.connect(self.choose_input_file)
         self.write_file_bt.clicked.connect(self.write_file)
 
         self.worker.change_status.connect(self.change_status)
@@ -256,6 +285,7 @@ class Ui_MainWindow(QMainWindow):
     def change_status(self, text, is_multi):
         if not is_multi:
             if not text:
+                self.clear_table()
                 self.status.setText('Статус: В процессе.')
             else:
                 self.status.setText('Статус: Завершено!')
@@ -263,22 +293,26 @@ class Ui_MainWindow(QMainWindow):
                 self.is_running = False
         else:
             if not text:
+                self.clear_table()
                 self.status_2.setText('Статус: В процессе.')
             else:
                 self.status_2.setText('Статус: Завершено!')
                 self.thread.quit()
-                self.running = False
+                self.is_running = False
 
     def count_align(self, is_multi):
-        #self.calc_thread = CalcThread(self, False)
-        #self.calc_thread.start()
         if not self.is_running:
-            self.is_running = True
-            self.thread.start()
             if not is_multi:
+                self.is_running = True
+                self.thread.start()
                 self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
             else:
-                pass
+                if self.input_file:
+                    self.is_running = True
+                    self.thread.start()
+                    self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
+                else:
+                    print('No file chosen!')
         else:
             print('Process is running now!')
 
@@ -293,6 +327,9 @@ class Ui_MainWindow(QMainWindow):
 
     def clear_table(self):
         self.model.clear()
+
+    def choose_input_file(self):
+        self.input_file = QtWidgets.QFileDialog.getOpenFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
 
     def write_file(self):
         f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
