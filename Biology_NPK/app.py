@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt5.QtWidgets import QTableWidgetItem, QMainWindow
 from functions import *
 from exceptions import *
 from config import *
@@ -18,46 +18,42 @@ from xlsxwriter import Workbook
 from time import sleep
 
 
-class CalcThread(QtCore.QThread):
-    #running = False
+class CalcHandler(QtCore.QObject):
+    change_status = QtCore.pyqtSignal(bool, bool)
+    show_data = QtCore.pyqtSignal(list)
 
-    def __init__(self, window, multi_oper=False, parent=None):
-        super(CalcThread, self).__init__(parent)
-        self.multi_operation = multi_oper
+    data = []
 
-        self.align_func = window.choice_box_1.currentIndex()
-        self.mode = window.choice_box_2.currentIndex()
-        self.window = window
-        self.res = ''
-        if not multi_oper:
-            self.s1 = window.s1.toPlainText()
-            self.s2 = window.s2.toPlainText()
+    def start(self):
+        if not len(self.data):
+            print('Error')
         else:
-            self.s1 = window.s.toPlainText()
-            self.s2 = ''
+            is_multi = self.data[0]
+            if not is_multi:
+                align_func = self.data[1]
+                align_mode = self.data[2]
+                s1 = self.data[3]
+                s2 = self.data[4]
 
-    def stop(self):
-        self.wait()
+                self.change_status.emit(0, False)
 
-    def run(self):
-        self.window.status.setText('Статус: В процессе.')
-        #self.window.status.repaint()
+                res = 0
 
-        if self.align_func == 0:
-            self.res = sequence_global_alignment(self.s1, self.s2, self.mode)
-        elif self.align_func == 1:
-            self.res = sequence_local_alignment(self.s1, self.s2, self.mode)
+                if align_func == 0:
+                    res = sequence_global_alignment(s1, s2, align_mode)
+                elif align_func == 1:
+                    res = sequence_local_alignment(s1, s2, align_mode)
 
-        self.window.status.setText('Статус: Завершено!')
+                self.change_status.emit(1, False)
 
-        data = [self.s1, self.s2, self.res]
+                self.show_data.emit([s1, s2, res])
+            else:
+                pass
 
-        #self.window.clear_table()
-        self.window.show_results(data)
-
-        #self.quit()
-        #self.stop()
-
+    @QtCore.pyqtSlot(list)
+    def get_data(self, data):
+        self.data = data
+        self.start()
 
 
 class TableModel(QtCore.QAbstractTableModel):
@@ -126,7 +122,9 @@ class TableModel(QtCore.QAbstractTableModel):
         return super().headerData(section, orientation, role)
 
 
-class Ui_MainWindow(object):
+class Ui_MainWindow(QMainWindow):
+    transmit_data = QtCore.pyqtSignal(list)
+
     def setupUi(self, MainWindow):
         """----------SETUP----------"""
 
@@ -229,7 +227,11 @@ class Ui_MainWindow(object):
         self.choice_box_2.addItem("")
         self.choice_box_2.addItem("")
 
-        #self.calc_thread = CalcThread('', '', 0, 0)
+        self.worker = CalcHandler()
+        self.thread = QtCore.QThread(MainWindow)
+        self.worker.moveToThread(self.thread)
+
+        self.is_running = False
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -242,22 +244,45 @@ class Ui_MainWindow(object):
         self.add_actions()
 
     def add_actions(self):
-        self.count_bt.clicked.connect(self.count_align)
-        self.count_bt_2.clicked.connect(self.test)
+        self.count_bt.clicked.connect(lambda: self.count_align(0))
+        self.count_bt_2.clicked.connect(lambda: self.count_align(1))
         self.write_file_bt.clicked.connect(self.write_file)
 
-    def test(self):
-        self.model.addRow(['AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'BBB', 100])
-        self.table.setModel(self.model)
+        self.worker.change_status.connect(self.change_status)
+        self.worker.show_data.connect(self.show_results)
+        self.transmit_data.connect(self.worker.get_data)
 
-        self.table.resizeColumnsToContents()
-        self.table.resizeRowsToContents()
-        self.table.adjustSize()
+    @QtCore.pyqtSlot(bool, bool)
+    def change_status(self, text, is_multi):
+        if not is_multi:
+            if not text:
+                self.status.setText('Статус: В процессе.')
+            else:
+                self.status.setText('Статус: Завершено!')
+                self.thread.quit()
+                self.is_running = False
+        else:
+            if not text:
+                self.status_2.setText('Статус: В процессе.')
+            else:
+                self.status_2.setText('Статус: Завершено!')
+                self.thread.quit()
+                self.running = False
 
-    def count_align(self):
-        self.calc_thread = CalcThread(self, False)
-        self.calc_thread.start()
+    def count_align(self, is_multi):
+        #self.calc_thread = CalcThread(self, False)
+        #self.calc_thread.start()
+        if not self.is_running:
+            self.is_running = True
+            self.thread.start()
+            if not is_multi:
+                self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
+            else:
+                pass
+        else:
+            print('Process is running now!')
 
+    @QtCore.pyqtSlot(list)
     def show_results(self, data):
         self.model.addRow(data)
         self.table.setModel(self.model)
