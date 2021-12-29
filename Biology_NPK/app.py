@@ -161,7 +161,8 @@ class Ui_MainWindow(QMainWindow):
         """----------SETUP----------"""
 
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(723, 673)
+        #MainWindow.resize(723, 673)
+        MainWindow.resize(723, 400)
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setEnabled(True)
@@ -269,6 +270,7 @@ class Ui_MainWindow(QMainWindow):
         self.input_file = ''
 
         MainWindow.setCentralWidget(self.centralwidget)
+        MainWindow.move(1280+0, 10)
 
         self.retranslateUi(MainWindow)
         self.align_tab.setCurrentIndex(0)
