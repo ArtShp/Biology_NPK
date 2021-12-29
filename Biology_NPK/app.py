@@ -312,16 +312,22 @@ class Ui_MainWindow(QMainWindow):
     def count_align(self, is_multi):
         if not self.is_running:
             if not is_multi:
-                self.is_running = True
-                self.clear_table()
-                self.thread.start()
-                self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
-            else:
-                if self.input_file:
+                if self.s1.toPlainText() and self.s2.toPlainText():
                     self.is_running = True
                     self.clear_table()
                     self.thread.start()
-                    self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
+                    self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
+                else:
+                    print('Not all fields filled!')
+            else:
+                if self.input_file:
+                    if self.s.toPlainText():
+                        self.is_running = True
+                        self.clear_table()
+                        self.thread.start()
+                        self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
+                    else:
+                        print('Not all fields filled!')
                 else:
                     print('No file chosen!')
         else:
@@ -354,44 +360,47 @@ class Ui_MainWindow(QMainWindow):
         self.input_file = QtWidgets.QFileDialog.getOpenFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
 
     def write_file(self):
-        f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
-        #f_name = QtWidgets.QFileDialog.getSaveFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
-        if f_name != '':
-            data = self.model.get_data()
+        if not self.is_running:
+            f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
+            #f_name = QtWidgets.QFileDialog.getSaveFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
+            if f_name != '':
+                data = self.model.get_data()
 
-            wb = Workbook(f_name)
-            ws1 = wb.add_worksheet('Shorted')
-            #ws2 = wb.add_worksheet('Full')
+                wb = Workbook(f_name)
+                ws1 = wb.add_worksheet('Shorted')
+                #ws2 = wb.add_worksheet('Full')
 
-            title_f = wb.add_format({'font_size': 18, 'align': 'center'})
-            subtitle_f = wb.add_format({'font_size': 14, 'align': 'center'})
-            #data_f = wb.add_format({'align': 'center'})
-            data_f = wb.add_format({})
+                title_f = wb.add_format({'font_size': 18, 'align': 'center'})
+                subtitle_f = wb.add_format({'font_size': 14, 'align': 'center'})
+                #data_f = wb.add_format({'align': 'center'})
+                data_f = wb.add_format({})
 
-            ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
-            #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
+                ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
+                #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
 
-            ws1.merge_range('A2:G2', 0, subtitle_f)
-            ws1.merge_range('H2:N2', 0, subtitle_f)
+                ws1.merge_range('A2:G2', 0, subtitle_f)
+                ws1.merge_range('H2:N2', 0, subtitle_f)
 
-            ws1.merge_range('A3:F3', 'Последовательность 1', subtitle_f)
-            ws1.merge_range('G3:L3', 'Последовательность 2', subtitle_f)
-            ws1.merge_range('M3:N3', 'Результат', subtitle_f)
+                ws1.merge_range('A3:F3', 'Последовательность 1', subtitle_f)
+                ws1.merge_range('G3:L3', 'Последовательность 2', subtitle_f)
+                ws1.merge_range('M3:N3', 'Результат', subtitle_f)
 
-            for i in range(len(data)):
-                if len(data[i][0]) <= 50:
-                    ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0], data_f)
-                else:
-                    ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0][:50]+'...', data_f)
-                if len(data[i][1]) <= 50:
-                    ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1], data_f)
-                else:
-                    ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1][:50] + '...', data_f)
-                ws1.merge_range(f'M{4+i}:N{4+i}', data[i][2], data_f)
+                for i in range(len(data)):
+                    if len(data[i][0]) <= 50:
+                        ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0], data_f)
+                    else:
+                        ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0][:50]+'...', data_f)
+                    if len(data[i][1]) <= 50:
+                        ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1], data_f)
+                    else:
+                        ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1][:50] + '...', data_f)
+                    ws1.merge_range(f'M{4+i}:N{4+i}', data[i][2], data_f)
 
-            wb.close()
+                wb.close()
+            else:
+                print('Error')
         else:
-            print('Error')
+            print('Process is running!')
 
 
     def retranslateUi(self, MainWindow):
