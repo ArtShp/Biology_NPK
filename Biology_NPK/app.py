@@ -21,6 +21,8 @@ from time import sleep
 class CalcHandler(QtCore.QObject):
     change_status = QtCore.pyqtSignal(bool, bool)
     show_data = QtCore.pyqtSignal(list)
+    configure_progress_bar = QtCore.pyqtSignal(int)
+    update_progress_bar = QtCore.pyqtSignal(int)
 
     data = []
 
@@ -59,6 +61,7 @@ class CalcHandler(QtCore.QObject):
 
                 res = 0
 
+                self.configure_progress_bar.emit(data_amount)
                 self.change_status.emit(0, True)
 
                 for i in range(data_amount):
@@ -72,7 +75,10 @@ class CalcHandler(QtCore.QObject):
                     elif align_func == 1:
                         res = sequence_local_alignment(s1, s2, align_mode)
 
+                    self.update_progress_bar.emit(i+1)
                     self.show_data.emit([s1, s2, res])
+
+                file.close()
 
                 self.change_status.emit(1, True)
 
@@ -220,6 +226,7 @@ class Ui_MainWindow(QMainWindow):
 
         self.progress_bar = QtWidgets.QProgressBar(self.tab_2)
         self.progress_bar.setGeometry(QtCore.QRect(500, 50, 118, 23))
+        self.progress_bar.setMinimum(0)
         self.progress_bar.setProperty("value", 0)
         self.progress_bar.setObjectName("progress_bar")
 
@@ -280,6 +287,8 @@ class Ui_MainWindow(QMainWindow):
         self.worker.change_status.connect(self.change_status)
         self.worker.show_data.connect(self.show_results)
         self.transmit_data.connect(self.worker.get_data)
+        self.worker.configure_progress_bar.connect(self.configure_progress_bar)
+        self.worker.update_progress_bar.connect(self.update_progress_bar)
 
     @QtCore.pyqtSlot(bool, bool)
     def change_status(self, text, is_multi):
@@ -324,6 +333,15 @@ class Ui_MainWindow(QMainWindow):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.table.adjustSize()
+
+    @QtCore.pyqtSlot(int)
+    def configure_progress_bar(self, maximum):
+        self.progress_bar.setValue(0)
+        self.progress_bar.setMaximum(maximum)
+
+    @QtCore.pyqtSlot(int)
+    def update_progress_bar(self, val):
+        self.progress_bar.setValue(val)
 
     def clear_table(self):
         self.model.clear()
