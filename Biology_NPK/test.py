@@ -3,7 +3,7 @@ from random import randint
 x = open('C:/Users/Admin/PycharmProjects/Biology_NPK/input/input.txt', 'w+')
 arr = 'ARNDCQEGHILKMFPSTWYVBZX'
 
-amount = 10
+amount = 13
 length = 300
 
 for i in range(amount):

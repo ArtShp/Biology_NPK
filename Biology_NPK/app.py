@@ -294,7 +294,7 @@ class Ui_MainWindow(QMainWindow):
     def change_status(self, text, is_multi):
         if not is_multi:
             if not text:
-                self.clear_table()
+                #self.clear_table()
                 self.status.setText('Статус: В процессе.')
             else:
                 self.status.setText('Статус: Завершено!')
@@ -302,7 +302,7 @@ class Ui_MainWindow(QMainWindow):
                 self.is_running = False
         else:
             if not text:
-                self.clear_table()
+                #self.clear_table()
                 self.status_2.setText('Статус: В процессе.')
             else:
                 self.status_2.setText('Статус: Завершено!')
@@ -313,11 +313,13 @@ class Ui_MainWindow(QMainWindow):
         if not self.is_running:
             if not is_multi:
                 self.is_running = True
+                self.clear_table()
                 self.thread.start()
                 self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
             else:
                 if self.input_file:
                     self.is_running = True
+                    self.clear_table()
                     self.thread.start()
                     self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
                 else:
@@ -345,6 +347,8 @@ class Ui_MainWindow(QMainWindow):
 
     def clear_table(self):
         self.model.clear()
+        self.table.setModel(self.model)
+        self.table.repaint()
 
     def choose_input_file(self):
         self.input_file = QtWidgets.QFileDialog.getOpenFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
