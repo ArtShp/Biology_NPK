@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QTableWidgetItem, QMainWindow
+import sys
 from functions import *
 from exceptions import *
 from config import *
@@ -154,127 +155,113 @@ class TableModel(QtCore.QAbstractTableModel):
         return super().headerData(section, orientation, role)
 
 
-class Ui_MainWindow(QMainWindow):
+class MainWindow(QMainWindow):
     transmit_data = QtCore.pyqtSignal(list)
 
-    def setupUi(self, MainWindow):
+    def __init__(self):
+        super(MainWindow, self).__init__()
+
+        self.setupUi()
+
+    def setupUi(self):
         """----------SETUP----------"""
+        self.setWindowTitle('MainWindow')
+        self.resize(723, 400)
+        self.move(1280+0, 10)
 
-        MainWindow.setObjectName("MainWindow")
-        #MainWindow.resize(723, 673)
-        MainWindow.resize(723, 400)
-
-        self.centralwidget = QtWidgets.QWidget(MainWindow)
-        self.centralwidget.setEnabled(True)
-        self.centralwidget.setObjectName("centralwidget")
-
-        self.choice_box_1 = QtWidgets.QComboBox(self.centralwidget)
+        self.choice_box_1 = QtWidgets.QComboBox(self)
         self.choice_box_1.setEnabled(True)
         self.choice_box_1.setGeometry(QtCore.QRect(0, 0, 161, 31))
-        self.choice_box_1.setObjectName("choice_box_1")
-        self.choice_box_1.addItem("")
-        self.choice_box_1.addItem("")
+        self.choice_box_1.addItem("Глобальное выравнивание")
+        self.choice_box_1.addItem("Локальное выравнивание")
 
 
-        self.align_tab = QtWidgets.QTabWidget(self.centralwidget)
+        self.align_tab = QtWidgets.QTabWidget(self)
         self.align_tab.setGeometry(QtCore.QRect(0, 30, 711, 141))
-        self.align_tab.setObjectName("align_tab")
 
         self.tab_1 = QtWidgets.QWidget()
-        self.tab_1.setObjectName("tab_1")
 
         self.count_bt = QtWidgets.QPushButton(self.tab_1)
         self.count_bt.setGeometry(QtCore.QRect(290, 50, 75, 23))
-        self.count_bt.setObjectName("count_bt")
+        self.count_bt.setText('Посчитать')
 
         self.s1 = QtWidgets.QPlainTextEdit(self.tab_1)
         self.s1.setGeometry(QtCore.QRect(10, 30, 121, 71))
-        self.s1.setObjectName("s1")
 
         self.s2 = QtWidgets.QPlainTextEdit(self.tab_1)
         self.s2.setGeometry(QtCore.QRect(150, 30, 121, 71))
-        self.s2.setObjectName("s2")
 
         self.s1_sign = QtWidgets.QLabel(self.tab_1)
         self.s1_sign.setGeometry(QtCore.QRect(10, 10, 121, 16))
-        self.s1_sign.setObjectName("s1_sign")
+        self.s1_sign.setText('Последовательность 1')
 
         self.s2_sign = QtWidgets.QLabel(self.tab_1)
         self.s2_sign.setGeometry(QtCore.QRect(150, 10, 121, 16))
-        self.s2_sign.setObjectName("s2_sign")
+        self.s2_sign.setText('Последовательность 2')
 
         self.status = QtWidgets.QLabel(self.tab_1)
         self.status.setGeometry(QtCore.QRect(380, 50, 141, 21))
-        self.status.setObjectName("status")
+        self.status.setText('Статус: Работа не начата.')
 
-        self.align_tab.addTab(self.tab_1, "")
+        self.align_tab.addTab(self.tab_1, '1 + 1')
 
 
         self.tab_2 = QtWidgets.QWidget()
-        self.tab_2.setObjectName("tab_2")
 
         self.s = QtWidgets.QPlainTextEdit(self.tab_2)
         self.s.setGeometry(QtCore.QRect(10, 30, 121, 71))
-        self.s.setObjectName("s")
 
         self.infile_bt = QtWidgets.QPushButton(self.tab_2)
         self.infile_bt.setGeometry(QtCore.QRect(140, 50, 101, 23))
-        self.infile_bt.setObjectName("infile_bt")
+        self.infile_bt.setText('Выбрать файл')
 
         self.count_bt_2 = QtWidgets.QPushButton(self.tab_2)
         self.count_bt_2.setGeometry(QtCore.QRect(260, 50, 75, 23))
-        self.count_bt_2.setObjectName("count_bt_2")
+        self.count_bt_2.setText('Посчитать')
 
         self.progress_bar = QtWidgets.QProgressBar(self.tab_2)
         self.progress_bar.setGeometry(QtCore.QRect(500, 50, 118, 23))
         self.progress_bar.setMinimum(0)
         self.progress_bar.setProperty("value", 0)
-        self.progress_bar.setObjectName("progress_bar")
 
         self.s_sign = QtWidgets.QLabel(self.tab_2)
         self.s_sign.setGeometry(QtCore.QRect(10, 10, 121, 16))
-        self.s_sign.setObjectName("s_sign")
+        self.s_sign.setText('Последовательность 1')
 
         self.status_2 = QtWidgets.QLabel(self.tab_2)
         self.status_2.setGeometry(QtCore.QRect(350, 50, 141, 21))
-        self.status_2.setObjectName("status_2")
+        self.status_2.setText('Статус: Работа не начата.')
 
-        self.align_tab.addTab(self.tab_2, "")
+        self.align_tab.addTab(self.tab_2, '1 + many')
 
 
-        self.table = QtWidgets.QTableView(self.centralwidget)
+        self.table = QtWidgets.QTableView(self)
         self.table.setEnabled(True)
         self.table.setMinimumSize(700, 50)
         self.table.setMaximumSize(700, 200)
         self.table.setGeometry(QtCore.QRect(0, 170, self.table.minimumWidth(), self.table.minimumHeight()))
-        self.table.setObjectName("table")
 
         self.model = TableModel()
 
-        self.write_file_bt = QtWidgets.QPushButton(self.centralwidget)
+        self.write_file_bt = QtWidgets.QPushButton(self)
         self.write_file_bt.setGeometry(QtCore.QRect(10, 370, 91, 23))
-        self.write_file_bt.setObjectName("write_file_bt")
+        self.write_file_bt.setText('Запись в файл')
 
-        self.choice_box_2 = QtWidgets.QComboBox(self.centralwidget)
+        self.choice_box_2 = QtWidgets.QComboBox(self)
         self.choice_box_2.setGeometry(QtCore.QRect(160, 0, 171, 31))
-        self.choice_box_2.setObjectName("choice_box_2")
-        self.choice_box_2.addItem("")
-        self.choice_box_2.addItem("")
+        self.choice_box_2.addItem('По BLOSUM62')
+        self.choice_box_2.addItem('По стандартной (Тестовой)')
 
         self.worker = CalcHandler()
-        self.thread = QtCore.QThread(MainWindow)
+        self.thread = QtCore.QThread(self)
         self.worker.moveToThread(self.thread)
 
         self.is_running = False
 
         self.input_file = ''
 
-        MainWindow.setCentralWidget(self.centralwidget)
-        MainWindow.move(1280+0, 10)
-
-        self.retranslateUi(MainWindow)
         self.align_tab.setCurrentIndex(0)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        #QtCore.QMetaObject.connectSlotsByName(self)
 
 
         """----------Functions Setup----------"""
@@ -359,12 +346,14 @@ class Ui_MainWindow(QMainWindow):
         self.table.repaint()
 
     def choose_input_file(self):
-        self.input_file = QtWidgets.QFileDialog.getOpenFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
+        self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", "C:/Users/user/Desktop/Biology_NPK/input", "Text file (*.txt)")[0]
+        #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
 
     def write_file(self):
         if not self.is_running:
-            f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
-            #f_name = QtWidgets.QFileDialog.getSaveFileName(MainWindow, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
+            f_name = 'C:/Users/user/Desktop/Biology_NPK/output/res.xlsx'
+            #f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
+            #f_name = QtWidgets.QFileDialog.getSaveFileName(self, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
             if f_name != '':
                 data = self.model.get_data()
 
@@ -405,31 +394,11 @@ class Ui_MainWindow(QMainWindow):
             print('Process is running!')
 
 
-    def retranslateUi(self, MainWindow):
-        _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.choice_box_1.setItemText(0, _translate("MainWindow", "Глобальное выравнивание"))
-        self.choice_box_1.setItemText(1, _translate("MainWindow", "Локальное выравнивание"))
-        self.count_bt.setText(_translate("MainWindow", "Посчитать"))
-        self.s1_sign.setText(_translate("MainWindow", "<html><head/><body><p>Последовательность 1</p></body></html>"))
-        self.s2_sign.setText(_translate("MainWindow", "Последовательность 2"))
-        self.status.setText(_translate("MainWindow", "Статус: Работа не начата."))
-        self.align_tab.setTabText(self.align_tab.indexOf(self.tab_1), _translate("MainWindow", "1 + 1"))
-        self.infile_bt.setText(_translate("MainWindow", "Выбрать файл"))
-        self.count_bt_2.setText(_translate("MainWindow", "Посчитать"))
-        self.s_sign.setText(_translate("MainWindow", "Последовательность 1"))
-        self.status_2.setText(_translate("MainWindow", "Статус: работа не начата"))
-        self.align_tab.setTabText(self.align_tab.indexOf(self.tab_2), _translate("MainWindow", "1 + many"))
-        self.write_file_bt.setText(_translate("MainWindow", "Запись в файл"))
-        self.choice_box_2.setItemText(0, _translate("MainWindow", "По BLOSUM62"))
-        self.choice_box_2.setItemText(1, _translate("MainWindow", "По стандартной (Тестовой)"))
-
-
 if __name__ == "__main__":
-    import sys
     app = QtWidgets.QApplication(sys.argv)
-    MainWindow = QtWidgets.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    #MainWindow = QtWidgets.QMainWindow()
+    window = MainWindow()
+    #ui.setupUi(MainWindow)
+    #MainWindow.show()
+    window.show()
     sys.exit(app.exec_())
