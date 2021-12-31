@@ -328,45 +328,51 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def write_file(self):
         if not self.is_running:
-            f_name = 'C:/Users/user/Desktop/Biology_NPK/output/res.xlsx'
-            #f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
-            #f_name = QtWidgets.QFileDialog.getSaveFileName(self, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
-            if f_name != '':
-                data = self.model.get_data()
+            if self.model.get_data():
+                f_name = 'C:/Users/user/Desktop/Biology_NPK/output/res.xlsx'
+                #f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
+                #f_name = QtWidgets.QFileDialog.getSaveFileName(self, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
+                if f_name != '':
+                    self.is_running = True
+                    data = self.model.get_data()
 
-                wb = Workbook(f_name)
-                ws1 = wb.add_worksheet('Shorted')
-                #ws2 = wb.add_worksheet('Full')
+                    wb = Workbook(f_name)
+                    ws1 = wb.add_worksheet('Shorted')
+                    #ws2 = wb.add_worksheet('Full')
 
-                title_f = wb.add_format({'font_size': 18, 'align': 'center'})
-                subtitle_f = wb.add_format({'font_size': 14, 'align': 'center'})
-                #data_f = wb.add_format({'align': 'center'})
-                data_f = wb.add_format({})
+                    title_f = wb.add_format({'font_size': 18, 'align': 'center'})
+                    subtitle_f = wb.add_format({'font_size': 14, 'align': 'center'})
+                    #data_f = wb.add_format({'align': 'center'})
+                    data_f = wb.add_format({})
 
-                ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
-                #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
+                    ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
+                    #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
 
-                ws1.merge_range('A2:G2', 0, subtitle_f)
-                ws1.merge_range('H2:N2', 0, subtitle_f)
+                    ws1.merge_range('A2:G2', self.used_align_1.text(), subtitle_f)
+                    ws1.merge_range('H2:N2', self.used_align_2.text(), subtitle_f)
 
-                ws1.merge_range('A3:F3', 'Последовательность 1', subtitle_f)
-                ws1.merge_range('G3:L3', 'Последовательность 2', subtitle_f)
-                ws1.merge_range('M3:N3', 'Результат', subtitle_f)
+                    ws1.merge_range('A3:F3', 'Последовательность 1', subtitle_f)
+                    ws1.merge_range('G3:L3', 'Последовательность 2', subtitle_f)
+                    ws1.merge_range('M3:N3', 'Результат', subtitle_f)
 
-                for i in range(len(data)):
-                    if len(data[i][0]) <= 50:
-                        ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0], data_f)
-                    else:
-                        ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0][:50]+'...', data_f)
-                    if len(data[i][1]) <= 50:
-                        ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1], data_f)
-                    else:
-                        ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1][:50] + '...', data_f)
-                    ws1.merge_range(f'M{4+i}:N{4+i}', data[i][2], data_f)
+                    for i in range(len(data)):
+                        if len(data[i][0]) <= 50:
+                            ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0], data_f)
+                        else:
+                            ws1.merge_range(f'A{4+i}:F{4+i}', data[i][0][:50]+'...', data_f)
+                        if len(data[i][1]) <= 50:
+                            ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1], data_f)
+                        else:
+                            ws1.merge_range(f'G{4+i}:L{4+i}', data[i][1][:50] + '...', data_f)
+                        ws1.merge_range(f'M{4+i}:N{4+i}', data[i][2], data_f)
 
-                wb.close()
+                    wb.close()
+                    print('File written successfully')
+                    self.is_running = False
+                else:
+                    print('Error')
             else:
-                print('Error')
+                print('No data to write!')
         else:
             print('Process is running!')
 
