@@ -166,8 +166,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _ui_setup(self):
         """User interface setup"""
-        self.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
-
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
         self.resize(723, 400)
@@ -264,6 +262,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _other_setup(self):
         """Other objects setup"""
+        #elf.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))  # Locale to English
         self.is_running = False  # Is running any calculations
         self.input_file = ''  # Path to input data file
 
@@ -302,7 +301,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     self.thread.start()
                     self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
                 else:
-                    print('Not all fields filled!')
+                    print('Warning -> Not all fields filled!')
             else:
                 if self.input_file:
                     if self.s.toPlainText():
@@ -311,11 +310,11 @@ class MainWindow(QtWidgets.QMainWindow):
                         self.thread.start()
                         self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
                     else:
-                        print('Not all fields filled!')
+                        print('Warning -> Not all fields filled!')
                 else:
-                    print('No file chosen!')
+                    print('Warning -> No file chosen!')
         else:
-            print('Process is running now!')
+            print('Warning -> Process is running now!')
 
     def clear_table(self):
         self.model.clear()
@@ -371,14 +370,14 @@ class MainWindow(QtWidgets.QMainWindow):
                         ws1.write(f'N{4+i}', data[i][2], data_f)
 
                     wb.close()
-                    print('File written successfully')
+                    print('INFO -> File written successfully')
                     self.is_running = False
                 else:
-                    print('Error')
+                    print('ERROR -> Error')
             else:
-                print('No data to write!')
+                print('WARNING -> No data to write!')
         else:
-            print('Process is running!')
+            print('WARNING -> Process is running!')
 
     """SLOTS"""
     @QtCore.pyqtSlot(bool, bool)
