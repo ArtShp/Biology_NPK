@@ -14,6 +14,7 @@ NAMES = {
     'count_bt_sign': 'Посчитать',
     'status_default_sign': 'Статус: Работа не начата.',
     'infile_bt_sign': 'Выбрать файл',
-    'write_file_bt_sign': 'Запись в файл'
+    'write_file_bt_sign': 'Запись в файл',
+    'table_headers': ['Последовательность 1', 'Последовательность 2', 'Результат', '', '']
 }  # Names/Signs of UI objects
 

@@ -90,9 +90,8 @@ class TableModel(QtCore.QAbstractTableModel):
 
         """Horizontal headers"""
         self.horizontalHeaders = [''] * 3
-        self.setHeaderData(0, Qt.Horizontal, 'Последовательность 1')
-        self.setHeaderData(1, Qt.Horizontal, 'Последовательность 2')
-        self.setHeaderData(2, Qt.Horizontal, 'Результат')
+        for i in range(len(self.horizontalHeaders)):
+            self.setHeaderData(i, Qt.Horizontal, NAMES['table_headers'][i])
 
         self._full_data = []
         self._data = []
@@ -108,7 +107,8 @@ class TableModel(QtCore.QAbstractTableModel):
         return len(self._data)
 
     def columnCount(self, parent=None):
-        return 3
+        return len(self.horizontalHeaders)
+        #return 3
 
     def add_row(self, data):
         self._full_data.append(data)
@@ -162,6 +162,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def _ui_setup(self):
         """User interface setup"""
+        self.setLocale(QtCore.QLocale(QtCore.QLocale.English, QtCore.QLocale.UnitedStates))
+
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
         self.resize(723, 400)
