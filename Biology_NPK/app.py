@@ -146,34 +146,46 @@ class TableModel(QtCore.QAbstractTableModel):
 
 
 class MainWindow(QtWidgets.QMainWindow):
+    """Main window class"""
+    """Signals"""
     transmit_data = QtCore.pyqtSignal(list)
 
+    """SETUP"""
     def __init__(self):
         super(MainWindow, self).__init__()
         self._ui_setup()
+        self._other_setup()
         self._actions_setup()
 
     def _ui_setup(self):
-        """----------SETUP----------"""
+        """User interface setup"""
+        """Main window"""
         self.setWindowTitle('Program')
         self.resize(723, 400)
         self.move(1280+0, 10)
 
+        """Combo/Choice boxes"""
         self.choice_box_1 = QtWidgets.QComboBox(self)
         self.choice_box_1.setGeometry(0, 0, 161, 31)
         self.choice_box_1.addItem('Глобальное выравнивание')
         self.choice_box_1.addItem('Локальное выравнивание')
 
+        self.choice_box_2 = QtWidgets.QComboBox(self)
+        self.choice_box_2.setGeometry(160, 0, 171, 31)
+        self.choice_box_2.addItem('По BLOSUM62')
+        self.choice_box_2.addItem('По стандартной (Тестовой)')
+
+        """Tabs"""
         self.align_tab = QtWidgets.QTabWidget(self)
         self.align_tab.setGeometry(0, 30, 711, 141)
 
-
         self.tab_1 = QtWidgets.QWidget()
+        self.tab_2 = QtWidgets.QWidget()
 
-        self.count_bt = QtWidgets.QPushButton(self.tab_1)
-        self.count_bt.setGeometry(290, 50, 75, 23)
-        self.count_bt.setText('Посчитать')
+        self.align_tab.addTab(self.tab_1, '1 + 1')
+        self.align_tab.addTab(self.tab_2, '1 + many')
 
+        """Tab 1 fill"""
         self.s1 = QtWidgets.QPlainTextEdit(self.tab_1)
         self.s1.setGeometry(10, 30, 121, 71)
 
@@ -188,17 +200,21 @@ class MainWindow(QtWidgets.QMainWindow):
         self.s2_sign.setGeometry(150, 10, 121, 16)
         self.s2_sign.setText('Последовательность 2')
 
+        self.count_bt = QtWidgets.QPushButton(self.tab_1)
+        self.count_bt.setGeometry(290, 50, 75, 23)
+        self.count_bt.setText('Посчитать')
+
         self.status = QtWidgets.QLabel(self.tab_1)
         self.status.setGeometry(380, 50, 141, 21)
         self.status.setText('Статус: Работа не начата.')
 
-        self.align_tab.addTab(self.tab_1, '1 + 1')
-
-
-        self.tab_2 = QtWidgets.QWidget()
-
+        """Tab 2 fill"""
         self.s = QtWidgets.QPlainTextEdit(self.tab_2)
         self.s.setGeometry(10, 30, 121, 71)
+
+        self.s_sign = QtWidgets.QLabel(self.tab_2)
+        self.s_sign.setGeometry(10, 10, 121, 16)
+        self.s_sign.setText('Последовательность 1')
 
         self.infile_bt = QtWidgets.QPushButton(self.tab_2)
         self.infile_bt.setGeometry(140, 50, 101, 23)
@@ -208,78 +224,56 @@ class MainWindow(QtWidgets.QMainWindow):
         self.count_bt_2.setGeometry(260, 50, 75, 23)
         self.count_bt_2.setText('Посчитать')
 
+        self.status_2 = QtWidgets.QLabel(self.tab_2)
+        self.status_2.setGeometry(350, 50, 141, 21)
+        self.status_2.setText('Статус: Работа не начата.')
+
         self.progress_bar = QtWidgets.QProgressBar(self.tab_2)
         self.progress_bar.setGeometry(500, 50, 118, 23)
         self.progress_bar.setMinimum(0)
         self.progress_bar.setValue(0)
 
-        self.s_sign = QtWidgets.QLabel(self.tab_2)
-        self.s_sign.setGeometry(10, 10, 121, 16)
-        self.s_sign.setText('Последовательность 1')
-
-        self.status_2 = QtWidgets.QLabel(self.tab_2)
-        self.status_2.setGeometry(350, 50, 141, 21)
-        self.status_2.setText('Статус: Работа не начата.')
-
-        self.align_tab.addTab(self.tab_2, '1 + many')
-
-
+        """Table"""
         self.table = QtWidgets.QTableView(self)
         self.table.setMinimumSize(700, 50)
         self.table.setMaximumSize(700, 200)
         self.table.setGeometry(0, 170, self.table.minimumWidth(), self.table.minimumHeight())
 
-        self.model = TableModel()
-
+        """Write file"""
         self.write_file_bt = QtWidgets.QPushButton(self)
         self.write_file_bt.setGeometry(10, 370, 91, 23)
         self.write_file_bt.setText('Запись в файл')
 
-        self.choice_box_2 = QtWidgets.QComboBox(self)
-        self.choice_box_2.setGeometry(160, 0, 171, 31)
-        self.choice_box_2.addItem('По BLOSUM62')
-        self.choice_box_2.addItem('По стандартной (Тестовой)')
+    def _other_setup(self):
+        """Other objects setup"""
+        self.is_running = False  # Is running any calculations
+        self.input_file = ''  # Path to input data file
 
+        self.model = TableModel()  # Data model for table
+
+        """Creating thread for calculating operations"""
         self.worker = CalcHandler()
         self.thread = QtCore.QThread(self)
         self.worker.moveToThread(self.thread)
 
-        self.is_running = False
-
-        self.input_file = ''
-
     def _actions_setup(self):
-        """----------Functions Setup----------"""
+        """Actions setup"""
+        """Connecting button clicks to functions"""
         self.count_bt.clicked.connect(lambda: self.count_align(0))
         self.count_bt_2.clicked.connect(lambda: self.count_align(1))
         self.infile_bt.clicked.connect(self.choose_input_file)
         self.write_file_bt.clicked.connect(self.write_file)
 
+        """Connecting signals to functions"""
+        self.transmit_data.connect(self.worker.get_data)
+
+        """Connecting slots to functions"""
         self.worker.change_status.connect(self.change_status)
         self.worker.show_data.connect(self.show_results)
-        self.transmit_data.connect(self.worker.get_data)
         self.worker.configure_progress_bar.connect(self.configure_progress_bar)
         self.worker.update_progress_bar.connect(self.update_progress_bar)
 
-    @QtCore.pyqtSlot(bool, bool)
-    def change_status(self, text, is_multi):
-        if not is_multi:
-            if not text:
-                #self.clear_table()
-                self.status.setText('Статус: В процессе.')
-            else:
-                self.status.setText('Статус: Завершено!')
-                self.thread.quit()
-                self.is_running = False
-        else:
-            if not text:
-                #self.clear_table()
-                self.status_2.setText('Статус: В процессе.')
-            else:
-                self.status_2.setText('Статус: Завершено!')
-                self.thread.quit()
-                self.is_running = False
-
+    """SIMPLE FUNCTIONS"""
     def count_align(self, is_multi):
         if not self.is_running:
             if not is_multi:
@@ -303,24 +297,6 @@ class MainWindow(QtWidgets.QMainWindow):
                     print('No file chosen!')
         else:
             print('Process is running now!')
-
-    @QtCore.pyqtSlot(list)
-    def show_results(self, data):
-        self.model.addRow(data)
-        self.table.setModel(self.model)
-
-        self.table.resizeColumnsToContents()
-        self.table.resizeRowsToContents()
-        self.table.adjustSize()
-
-    @QtCore.pyqtSlot(int)
-    def configure_progress_bar(self, maximum):
-        self.progress_bar.setValue(0)
-        self.progress_bar.setMaximum(maximum)
-
-    @QtCore.pyqtSlot(int)
-    def update_progress_bar(self, val):
-        self.progress_bar.setValue(val)
 
     def clear_table(self):
         self.model.clear()
@@ -374,6 +350,44 @@ class MainWindow(QtWidgets.QMainWindow):
                 print('Error')
         else:
             print('Process is running!')
+
+    """SLOTS"""
+    @QtCore.pyqtSlot(bool, bool)
+    def change_status(self, text, is_multi):
+        if not is_multi:
+            if not text:
+                # self.clear_table()
+                self.status.setText('Статус: В процессе.')
+            else:
+                self.status.setText('Статус: Завершено!')
+                self.thread.quit()
+                self.is_running = False
+        else:
+            if not text:
+                # self.clear_table()
+                self.status_2.setText('Статус: В процессе.')
+            else:
+                self.status_2.setText('Статус: Завершено!')
+                self.thread.quit()
+                self.is_running = False
+
+    @QtCore.pyqtSlot(list)
+    def show_results(self, data):
+        self.model.addRow(data)
+        self.table.setModel(self.model)
+
+        self.table.resizeColumnsToContents()
+        self.table.resizeRowsToContents()
+        self.table.adjustSize()
+
+    @QtCore.pyqtSlot(int)
+    def configure_progress_bar(self, maximum):
+        self.progress_bar.setValue(0)
+        self.progress_bar.setMaximum(maximum)
+
+    @QtCore.pyqtSlot(int)
+    def update_progress_bar(self, val):
+        self.progress_bar.setValue(val)
 
 
 if __name__ == "__main__":
