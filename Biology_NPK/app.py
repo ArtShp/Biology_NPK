@@ -14,10 +14,12 @@ class CalcHandler(QtCore.QObject):
     """Signals"""
     change_status = QtCore.pyqtSignal(bool, bool)
     show_data = QtCore.pyqtSignal(list)
+    show_used_align = QtCore.pyqtSignal(list)
     configure_progress_bar = QtCore.pyqtSignal(int)
     update_progress_bar = QtCore.pyqtSignal(int)
 
     data = []
+    #align = []
 
     def start(self):
         if not len(self.data):
@@ -33,6 +35,7 @@ class CalcHandler(QtCore.QObject):
                 res = 0
 
                 self.change_status.emit(0, False)
+                self.show_used_align.emit([align_func, align_mode])
 
                 if align_func == 0:
                     res = sequence_global_alignment(s1, s2, align_mode)
@@ -56,6 +59,7 @@ class CalcHandler(QtCore.QObject):
 
                 self.configure_progress_bar.emit(data_amount)
                 self.change_status.emit(0, True)
+                self.show_used_align.emit([align_func, align_mode])
 
                 for i in range(data_amount):
                     if i+1 != data_amount:
@@ -107,8 +111,8 @@ class TableModel(QtCore.QAbstractTableModel):
         return len(self._data)
 
     def columnCount(self, parent=None):
-        return len(self.horizontalHeaders)
-        #return 3
+        #return len(self.horizontalHeaders)
+        return 3
 
     def add_row(self, data):
         self._full_data.append(data)
@@ -249,6 +253,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.write_file_bt.setGeometry(10, 370, 91, 23)
         self.write_file_bt.setText(NAMES['write_file_bt_sign'])
 
+        """Labels with used align mode and type(in table)"""
+        self.used_align_1 = QtWidgets.QLabel(self)
+        self.used_align_1.setGeometry(150, 370, 161, 21)
+        self.used_align_1.setText(NAMES['used_align_default_sign'])
+
+        self.used_align_2 = QtWidgets.QLabel(self)
+        self.used_align_2.setGeometry(320, 370, 171, 21)
+        self.used_align_2.setText(NAMES['used_align_default_sign'])
+
     def _other_setup(self):
         """Other objects setup"""
         self.is_running = False  # Is running any calculations
@@ -275,6 +288,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """Connecting slots to functions"""
         self.worker.change_status.connect(self.change_status)
         self.worker.show_data.connect(self.show_results)
+        self.worker.show_used_align.connect(self.show_used_align)
         self.worker.configure_progress_bar.connect(self.configure_progress_bar)
         self.worker.update_progress_bar.connect(self.update_progress_bar)
 
@@ -384,6 +398,11 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.table.adjustSize()
+
+    @QtCore.pyqtSlot(list)
+    def show_used_align(self, align):
+        self.used_align_1.setText(self.choice_box_1.itemText(align[0]))
+        self.used_align_2.setText(self.choice_box_2.itemText(align[1]))
 
     @QtCore.pyqtSlot(int)
     def configure_progress_bar(self, maximum):
