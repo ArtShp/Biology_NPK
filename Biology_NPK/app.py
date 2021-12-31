@@ -10,6 +10,8 @@ from xlsxwriter import Workbook
 
 
 class CalcHandler(QtCore.QObject):
+    """Calculations thread(object) class"""
+    """Signals"""
     change_status = QtCore.pyqtSignal(bool, bool)
     show_data = QtCore.pyqtSignal(list)
     configure_progress_bar = QtCore.pyqtSignal(int)
@@ -80,13 +82,14 @@ class CalcHandler(QtCore.QObject):
 
 
 class TableModel(QtCore.QAbstractTableModel):
+    """Table data model class"""
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.length = 35
+        self.length = 35  # Temporary: max length of data
 
+        """Horizontal headers"""
         self.horizontalHeaders = [''] * 3
-
         self.setHeaderData(0, Qt.Horizontal, 'Последовательность 1')
         self.setHeaderData(1, Qt.Horizontal, 'Последовательность 2')
         self.setHeaderData(2, Qt.Horizontal, 'Результат')
@@ -107,7 +110,7 @@ class TableModel(QtCore.QAbstractTableModel):
     def columnCount(self, parent=None):
         return 3
 
-    def addRow(self, data):
+    def add_row(self, data):
         self._full_data.append(data)
         self._data.append([])
 
@@ -373,7 +376,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
     @QtCore.pyqtSlot(list)
     def show_results(self, data):
-        self.model.addRow(data)
+        self.model.add_row(data)
         self.table.setModel(self.model)
 
         self.table.resizeColumnsToContents()
