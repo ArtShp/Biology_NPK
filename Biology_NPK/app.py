@@ -3,7 +3,7 @@ import sys
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
-from config import *
+from config import NAMES
 from exceptions import *
 from functions import *
 from xlsxwriter import Workbook
@@ -163,20 +163,20 @@ class MainWindow(QtWidgets.QMainWindow):
     def _ui_setup(self):
         """User interface setup"""
         """Main window"""
-        self.setWindowTitle('Program')
+        self.setWindowTitle(NAMES['WindowTitle'])
         self.resize(723, 400)
         self.move(1280+0, 10)
 
         """Combo/Choice boxes"""
         self.choice_box_1 = QtWidgets.QComboBox(self)
         self.choice_box_1.setGeometry(0, 0, 161, 31)
-        self.choice_box_1.addItem('Глобальное выравнивание')
-        self.choice_box_1.addItem('Локальное выравнивание')
+        self.choice_box_1.addItem(NAMES['align_name_1'])
+        self.choice_box_1.addItem(NAMES['align_name_2'])
 
         self.choice_box_2 = QtWidgets.QComboBox(self)
         self.choice_box_2.setGeometry(160, 0, 171, 31)
-        self.choice_box_2.addItem('По BLOSUM62')
-        self.choice_box_2.addItem('По стандартной (Тестовой)')
+        self.choice_box_2.addItem(NAMES['align_type_1'])
+        self.choice_box_2.addItem(NAMES['align_type_2'])
 
         """Tabs"""
         self.align_tab = QtWidgets.QTabWidget(self)
@@ -185,8 +185,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tab_1 = QtWidgets.QWidget()
         self.tab_2 = QtWidgets.QWidget()
 
-        self.align_tab.addTab(self.tab_1, '1 + 1')
-        self.align_tab.addTab(self.tab_2, '1 + many')
+        self.align_tab.addTab(self.tab_1, NAMES['tab_name_1'])
+        self.align_tab.addTab(self.tab_2, NAMES['tab_name_2'])
 
         """Tab 1 fill"""
         self.s1 = QtWidgets.QPlainTextEdit(self.tab_1)
@@ -197,19 +197,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.s1_sign = QtWidgets.QLabel(self.tab_1)
         self.s1_sign.setGeometry(10, 10, 121, 16)
-        self.s1_sign.setText('Последовательность 1')
+        self.s1_sign.setText(NAMES['s1_sign'])
 
         self.s2_sign = QtWidgets.QLabel(self.tab_1)
         self.s2_sign.setGeometry(150, 10, 121, 16)
-        self.s2_sign.setText('Последовательность 2')
+        self.s2_sign.setText(NAMES['s2_sign'])
 
         self.count_bt = QtWidgets.QPushButton(self.tab_1)
         self.count_bt.setGeometry(290, 50, 75, 23)
-        self.count_bt.setText('Посчитать')
+        self.count_bt.setText(NAMES['count_bt_sign'])
 
         self.status = QtWidgets.QLabel(self.tab_1)
         self.status.setGeometry(380, 50, 141, 21)
-        self.status.setText('Статус: Работа не начата.')
+        self.status.setText(NAMES['status_default_sign'])
 
         """Tab 2 fill"""
         self.s = QtWidgets.QPlainTextEdit(self.tab_2)
@@ -217,19 +217,19 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.s_sign = QtWidgets.QLabel(self.tab_2)
         self.s_sign.setGeometry(10, 10, 121, 16)
-        self.s_sign.setText('Последовательность 1')
+        self.s_sign.setText(NAMES['s_sign'])
 
         self.infile_bt = QtWidgets.QPushButton(self.tab_2)
         self.infile_bt.setGeometry(140, 50, 101, 23)
-        self.infile_bt.setText('Выбрать файл')
+        self.infile_bt.setText(NAMES['infile_bt_sign'])
 
         self.count_bt_2 = QtWidgets.QPushButton(self.tab_2)
         self.count_bt_2.setGeometry(260, 50, 75, 23)
-        self.count_bt_2.setText('Посчитать')
+        self.count_bt_2.setText(NAMES['count_bt_sign'])
 
         self.status_2 = QtWidgets.QLabel(self.tab_2)
         self.status_2.setGeometry(350, 50, 141, 21)
-        self.status_2.setText('Статус: Работа не начата.')
+        self.status_2.setText(NAMES['status_default_sign'])
 
         self.progress_bar = QtWidgets.QProgressBar(self.tab_2)
         self.progress_bar.setGeometry(500, 50, 118, 23)
@@ -245,7 +245,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """Write file"""
         self.write_file_bt = QtWidgets.QPushButton(self)
         self.write_file_bt.setGeometry(10, 370, 91, 23)
-        self.write_file_bt.setText('Запись в файл')
+        self.write_file_bt.setText(NAMES['write_file_bt_sign'])
 
     def _other_setup(self):
         """Other objects setup"""
