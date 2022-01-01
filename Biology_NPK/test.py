@@ -1,9 +1,9 @@
 from random import randint
 
-x = open('C:/Users/Admin/PycharmProjects/Biology_NPK/input/input.txt', 'w+')
+x = open('C:/Users/user/Desktop/Biology_NPK/input/input_long.txt', 'w+')
 arr = 'ARNDCQEGHILKMFPSTWYVBZX'
 
-amount = 13
+amount = 100
 length = 300
 
 for i in range(amount):

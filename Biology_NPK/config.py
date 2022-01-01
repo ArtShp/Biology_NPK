@@ -25,21 +25,34 @@ BLOSUM62_TABLE = {'A': {'A': '4', 'R': '-1', 'N': '-2', 'D': '-2', 'C': '0', 'Q'
 
 NAMES = {
     'WindowTitle': 'Program',
+
     'align_name_1': 'Глобальное выравнивание',
     'align_name_2': 'Локальное выравнивание',
     'align_type_1': 'По BLOSUM62',
     'align_type_2': 'По стандартной (Тестовой)',
+
     'tab_name_1': '1 + 1',
     'tab_name_2': '1 + many',
+
     's_sign': 'Последовательность 1',
     's1_sign': 'Последовательность 1',
     's2_sign': 'Последовательность 2',
+
     'count_bt_sign': 'Посчитать',
+
     'status_default_sign': 'Статус: Работа не начата.',
+    'status_signs': ['Статус: В процессе.', 'Статус: Завершено!'],
+
     'infile_bt_sign': 'Выбрать файл',
+    'infile_bt_menu_sign': 'Open file',
     'write_file_bt_sign': 'Запись в файл',
+    'write_file_bt_menu_sign': 'Open file',
     'used_align_default_sign': 'Ещё нет',
 
-    'table_headers': ['Последовательность 1', 'Последовательность 2', 'Результат']
+    'infile_default_path': '',
+    'write_file_default_path': '',
+    'write_file_default_name': 'res',
+
+    'table_headers': ['Последовательность 1', 'Последовательность 2', 'Результат'],
 }  # Names/Signs of UI objects
 

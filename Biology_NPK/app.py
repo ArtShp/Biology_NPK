@@ -184,7 +184,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         """Tabs"""
         self.align_tab = QtWidgets.QTabWidget(self)
-        self.align_tab.setGeometry(0, 30, 711, 141)
+        self.align_tab.setGeometry(0, 30, 700, 141)
 
         self.tab_1 = QtWidgets.QWidget()
         self.tab_2 = QtWidgets.QWidget()
@@ -325,15 +325,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table.repaint()
 
     def choose_input_file(self):
-        self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", "C:/Users/user/Desktop/Biology_NPK/input", "Text file (*.txt)")[0]
-        #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
+        self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], "C:/Users/user/Desktop/Biology_NPK/input", "Text file (*.txt)")[0]
+        #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
+        #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], NAMES['infile_default_path'], "Text file (*.txt)")[0]
 
     def write_file(self):
         if not self.is_running:
             if self.model.get_data():
                 f_name = 'C:/Users/user/Desktop/Biology_NPK/output/res.xlsx'
                 #f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
-                #f_name = QtWidgets.QFileDialog.getSaveFileName(self, "Open file", "C:/Users/Admin/PycharmProjects/Biology_NPK/output", "Excel File (*.xlsx)")[0]
+                #f_name = QtWidgets.QFileDialog.getSaveFileName(self, NAMES['write_file_bt_menu_sign'], NAMES['write_file_default_path'], "Excel File (*.xlsx)")[0]
                 if f_name != '':
                     self.is_running = True
                     data = self.model.get_data()
@@ -384,21 +385,21 @@ class MainWindow(QtWidgets.QMainWindow):
 
     """SLOTS"""
     @QtCore.pyqtSlot(bool, bool)
-    def change_status(self, text, is_multi):
+    def change_status(self, status, is_multi):
         if not is_multi:
-            if not text:
+            if not status:
                 # self.clear_table()
-                self.status.setText('Статус: В процессе.')
+                self.status.setText(NAMES['status_signs'][0])
             else:
-                self.status.setText('Статус: Завершено!')
+                self.status.setText(NAMES['status_signs'][1])
                 self.thread.quit()
                 self.is_running = False
         else:
-            if not text:
+            if not status:
                 # self.clear_table()
-                self.status_2.setText('Статус: В процессе.')
+                self.status_2.setText(NAMES['status_signs'][0])
             else:
-                self.status_2.setText('Статус: Завершено!')
+                self.status_2.setText(NAMES['status_signs'][1])
                 self.thread.quit()
                 self.is_running = False
 
