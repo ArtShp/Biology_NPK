@@ -23,7 +23,7 @@ class CalcHandler(QtCore.QObject):
 
     def start(self):
         if not len(self.data):
-            print('Error')
+            print('Error -> Error')
         else:
             is_multi = self.data[0]
             if not is_multi:
@@ -244,7 +244,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table = QtWidgets.QTableView(self)
         self.table.setMinimumSize(700, 50)
         self.table.setMaximumSize(700, 200)
-        self.table.setGeometry(0, 170, self.table.minimumWidth(), self.table.minimumHeight())
+        self.table.setGeometry(0, 170, self.table.maximumWidth(), self.table.maximumHeight())
 
         """Write file"""
         self.write_file_bt = QtWidgets.QPushButton(self)
@@ -266,7 +266,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.is_running = False  # Is running any calculations
         self.input_file = ''  # Path to input data file
 
+        """Table data setup"""
         self.model = TableModel()  # Data model for table
+        self.table.setModel(self.model)  # Set table data model
+        self.table.resizeColumnsToContents()  # Resize columns to headers content width
 
         """Creating thread for calculating operations"""
         self.worker = CalcHandler()
@@ -407,6 +410,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.table.adjustSize()
+
+        self.table.scrollToBottom()
 
     @QtCore.pyqtSlot(list)
     def show_used_align(self, align):
