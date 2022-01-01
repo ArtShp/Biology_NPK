@@ -7,6 +7,7 @@ from config import NAMES
 from exceptions import *
 from functions import *
 from xlsxwriter import Workbook
+from xlsxwriter.exceptions import FileCreateError
 
 
 class CalcHandler(QtCore.QObject):
@@ -334,8 +335,8 @@ class MainWindow(QtWidgets.QMainWindow):
             if self.model.get_data():
                 f_name = 'C:/Users/user/Desktop/Biology_NPK/output/res.xlsx'
                 #f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
-                #f_name = QtWidgets.QFileDialog.getSaveFileName(self, NAMES['write_file_bt_menu_sign'], NAMES['write_file_default_path'], "Excel File (*.xlsx)")[0]
-                if f_name != '':
+                #f_name = QtWidgets.QFileDialog.getSaveFileName(self, NAMES['write_file_bt_menu_sign'], NAMES['write_file_default_path']+NAMES['write_file_default_name'], "Excel File (*.xlsx)")[0]
+                if f_name:
                     self.is_running = True
                     data = self.model.get_data()
 
@@ -373,11 +374,15 @@ class MainWindow(QtWidgets.QMainWindow):
                             ws1.merge_range(f'H{4+i}:M{4+i}', data[i][1][:50]+'...', data_f)
                         ws1.write(f'N{4+i}', data[i][2], data_f)
 
-                    wb.close()
-                    print('INFO -> File written successfully')
+                    try:
+                        wb.close()
+                        print('INFO -> File written successfully')
+                    except FileCreateError:
+                        print('ERROR -> File is exists and opened now.\n'
+                              '         Please close it and then try again.')
                     self.is_running = False
                 else:
-                    print('ERROR -> Error')
+                    print('WARNING -> No file chosen!')
             else:
                 print('WARNING -> No data to write!')
         else:

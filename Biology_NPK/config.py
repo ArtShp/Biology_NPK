@@ -49,8 +49,8 @@ NAMES = {
     'write_file_bt_menu_sign': 'Open file',
     'used_align_default_sign': 'Ещё нет',
 
-    'infile_default_path': '',
-    'write_file_default_path': '',
+    'infile_default_path': '/',
+    'write_file_default_path': '/',
     'write_file_default_name': 'res',
 
     'table_headers': ['Последовательность 1', 'Последовательность 2', 'Результат'],
