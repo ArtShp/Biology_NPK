@@ -3,6 +3,7 @@ import sys
 
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QMessageBox, QErrorMessage
 from config import NAMES
 from exceptions import *
 from functions import *
@@ -380,6 +381,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     except FileCreateError:
                         print('ERROR -> File is exists and opened now.\n'
                               '         Please close it and then try again.')
+                        self._error_message('Текст1\nТекст2', 'Детали')
                     self.is_running = False
                 else:
                     print('WARNING -> No file chosen!')
@@ -387,6 +389,19 @@ class MainWindow(QtWidgets.QMainWindow):
                 print('WARNING -> No data to write!')
         else:
             print('WARNING -> Process is running!')
+
+    def _error_message(self, error_text, error_details=None):
+        error = QMessageBox()
+        error.setWindowTitle(NAMES['error_message_title'])
+        error.setIcon(QMessageBox.Icon.Warning)
+
+        error.setText(error_text)
+        error.setDetailedText(error_details)
+
+        error.setStandardButtons(QMessageBox.StandardButton.Ok)
+
+        error.exec_()
+
 
     """SLOTS"""
     @QtCore.pyqtSlot(bool, bool)

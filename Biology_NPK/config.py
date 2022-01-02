@@ -54,5 +54,7 @@ NAMES = {
     'write_file_default_name': 'res',
 
     'table_headers': ['Последовательность 1', 'Последовательность 2', 'Результат'],
+
+    'error_message_title': 'Ошибка',
 }  # Names/Signs of UI objects
 
