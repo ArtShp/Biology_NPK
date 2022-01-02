@@ -171,7 +171,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
         self.resize(723, 400)
-        self.move(1280+0, 10)
+        self.move(10, 10)
 
         """Combo/Choice boxes"""
         self.choice_box_1 = QtWidgets.QComboBox(self)
