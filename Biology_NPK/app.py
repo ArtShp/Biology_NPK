@@ -379,7 +379,7 @@ class MainWindow(QtWidgets.QMainWindow):
                     except FileCreateError:
                         print('ERROR -> File is exists and opened now.\n'
                               '         Please close it and then try again.')
-                        self._error_message('Текст1\nТекст2', 'Детали')
+                        self._error_message('Невозможно сохранить файл!', 'Вы пытаетесь записать данные в открытый файл.\nЗакройте файл и повторите попытку.')
                     self.is_running = False
                 else:
                     print('WARNING -> No file chosen!')
@@ -388,12 +388,13 @@ class MainWindow(QtWidgets.QMainWindow):
         else:
             print('WARNING -> Process is running!')
 
-    def _error_message(self, error_text, error_details=None):
+    def _error_message(self, error_text, error_description=None, error_details=None):
         error = QMessageBox()
         error.setWindowTitle(NAMES['error_message_title'])
         error.setIcon(QMessageBox.Icon.Warning)
 
         error.setText(error_text)
+        error.setInformativeText(error_description)
         error.setDetailedText(error_details)
 
         error.setStandardButtons(QMessageBox.StandardButton.Ok)
