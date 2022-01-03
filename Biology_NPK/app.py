@@ -5,7 +5,6 @@ from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QErrorMessage
 from config import NAMES
-from exceptions import *
 from functions import *
 from xlsxwriter import Workbook
 from xlsxwriter.exceptions import FileCreateError
@@ -19,67 +18,77 @@ class CalcHandler(QtCore.QObject):
     show_used_align = QtCore.pyqtSignal(list)
     configure_progress_bar = QtCore.pyqtSignal(int)
     update_progress_bar = QtCore.pyqtSignal(int)
+    input_data_error = QtCore.pyqtSignal()
 
     data = []
     #align = []
 
     def start(self):
         if not len(self.data):
-            print('Error -> Error')
+            print('Error -> No data transmitted!')
         else:
             is_multi = self.data[0]
             if not is_multi:
-                align_func = self.data[1]
-                align_mode = self.data[2]
-                s1 = self.data[3]
-                s2 = self.data[4]
+                try:
+                    align_func = self.data[1]
+                    align_mode = self.data[2]
+                    s1 = self.data[3]
+                    s2 = self.data[4]
 
-                res = 0
+                    res = 0
 
-                self.change_status.emit(0, False)
-                self.show_used_align.emit([align_func, align_mode])
-
-                if align_func == 0:
-                    res = sequence_global_alignment(s1, s2, align_mode)
-                elif align_func == 1:
-                    res = sequence_local_alignment(s1, s2, align_mode)
-
-                self.show_data.emit([s1, s2, res])
-
-                self.change_status.emit(1, False)
-            else:
-                align_func = self.data[1]
-                align_mode = self.data[2]
-                s1 = self.data[3]
-                input_file_path = self.data[4]
-                file = open(input_file_path, 'r+')
-
-                data = file.readlines()
-                data_amount = len(data)
-
-                res = 0
-
-                self.configure_progress_bar.emit(data_amount)
-                self.change_status.emit(0, True)
-                self.show_used_align.emit([align_func, align_mode])
-
-                for i in range(data_amount):
-                    if i+1 != data_amount:
-                        s2 = data[i][:-1]
-                    else:
-                        s2 = data[i]
+                    self.change_status.emit(0, False)
+                    self.show_used_align.emit([align_func, align_mode])
 
                     if align_func == 0:
                         res = sequence_global_alignment(s1, s2, align_mode)
                     elif align_func == 1:
                         res = sequence_local_alignment(s1, s2, align_mode)
 
-                    self.update_progress_bar.emit(i+1)
                     self.show_data.emit([s1, s2, res])
 
-                file.close()
+                    self.change_status.emit(1, False)
+                except TypeError:
+                    self.change_status.emit(1, False)
+                    self.input_data_error.emit()
+            else:
+                try:
+                    align_func = self.data[1]
+                    align_mode = self.data[2]
+                    s1 = self.data[3]
+                    input_file_path = self.data[4]
+                    file = open(input_file_path, 'r+')
 
-                self.change_status.emit(1, True)
+                    data = file.readlines()
+                    data_amount = len(data)
+
+                    res = 0
+
+                    self.configure_progress_bar.emit(data_amount)
+                    self.change_status.emit(0, True)
+                    self.show_used_align.emit([align_func, align_mode])
+
+                    for i in range(data_amount):
+                        if i+1 != data_amount:
+                            s2 = data[i][:-1]
+                        else:
+                            s2 = data[i]
+
+                        if align_func == 0:
+                            res = sequence_global_alignment(s1, s2, align_mode)
+                        elif align_func == 1:
+                            res = sequence_local_alignment(s1, s2, align_mode)
+
+                        self.update_progress_bar.emit(i+1)
+                        self.show_data.emit([s1, s2, res])
+
+                    file.close()
+
+                    self.change_status.emit(1, True)
+                except TypeError:
+                    file.close()
+                    self.change_status.emit(1, True)
+                    self.input_data_error.emit()
 
     @QtCore.pyqtSlot(list)
     def get_data(self, data):
@@ -295,31 +304,36 @@ class MainWindow(QtWidgets.QMainWindow):
         self.worker.show_used_align.connect(self.show_used_align)
         self.worker.configure_progress_bar.connect(self.configure_progress_bar)
         self.worker.update_progress_bar.connect(self.update_progress_bar)
+        self.worker.input_data_error.connect(self.input_data_error)
 
     """SIMPLE FUNCTIONS"""
     def count_align(self, is_multi):
-        if not self.is_running:
-            if not is_multi:
-                if self.s1.toPlainText() and self.s2.toPlainText():
-                    self.is_running = True
-                    self.clear_table()
-                    self.thread.start()
-                    self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
-                else:
-                    print('Warning -> Not all fields filled!')
-            else:
-                if self.input_file:
-                    if self.s.toPlainText():
+        try:
+            if not self.is_running:
+                if not is_multi:
+                    if self.s1.toPlainText() and self.s2.toPlainText():
                         self.is_running = True
                         self.clear_table()
                         self.thread.start()
-                        self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
+                        self.transmit_data.emit([0, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s1.toPlainText(), self.s2.toPlainText()])
                     else:
                         print('Warning -> Not all fields filled!')
                 else:
-                    print('Warning -> No file chosen!')
-        else:
-            print('Warning -> Process is running now!')
+                    if self.input_file:
+                        if self.s.toPlainText():
+                            self.is_running = True
+                            self.clear_table()
+                            self.thread.start()
+                            self.transmit_data.emit([1, self.choice_box_1.currentIndex(), self.choice_box_2.currentIndex(), self.s.toPlainText(), self.input_file])
+                        else:
+                            print('Warning -> Not all fields filled!')
+                    else:
+                        print('Warning -> No file chosen!')
+            else:
+                print('Warning -> Process is running now!')
+        except TypeError:
+            print('Error -> Input data is incorrect!')
+            self._error_message('Ошибка при расчёте результата!', 'Введённые данные неверны.')
 
     def clear_table(self):
         self.model.clear()
@@ -401,7 +415,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         error.exec_()
 
-
     """SLOTS"""
     @QtCore.pyqtSlot(bool, bool)
     def change_status(self, status, is_multi):
@@ -426,6 +439,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def show_results(self, data):
         self.model.add_row(data)
         self.table.setModel(self.model)
+        self.table.repaint()
 
         self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
@@ -446,6 +460,15 @@ class MainWindow(QtWidgets.QMainWindow):
     @QtCore.pyqtSlot(int)
     def update_progress_bar(self, val):
         self.progress_bar.setValue(val)
+
+    @QtCore.pyqtSlot()
+    def input_data_error(self):
+        print('Error -> Input data is incorrect!')
+        self.is_running = False
+        self.thread.quit()
+        self.table.setModel(self.model)
+        self.table.repaint()
+        self._error_message('Ошибка при расчёте результата!', 'Введённые данные некорректны.')
 
 
 if __name__ == "__main__":

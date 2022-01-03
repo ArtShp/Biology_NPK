@@ -1,5 +1,4 @@
 from config import BLOSUM62_TABLE
-from exceptions import *
 from typing import Optional
 
 
