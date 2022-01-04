@@ -179,23 +179,57 @@ class MainWindow(QtWidgets.QMainWindow):
         """User interface setup"""
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
-        self.resize(723, 400)
-        self.move(10, 10)
+        self.resize(800, 500)
+        self.move(0, 0)
+        self.setStyleSheet("""
+        QPushButton {
+          display: inline-block;
+          width: 15em;
+          font-size: 80%;
+          color: rgba(255,255,255);
+          font-weight: bold;
+          text-align: center;
+          padding: .3em 0;
+          border: 1px solid;
+          border-color: #60a3d8 #2970a9 #2970a9 #60a3d8;
+          border-radius: 6px;
+          background: #60a3d8;
+          box-shadow: inset rgba(255,255,255,.5) 1px 1px;
+        }
+        QPushButton:hover {
+          background: #9dc7e7;
+        }
+        
+        
+        QComboBox {
+            border: 1px solid #6fabdc;
+            border-radius: 6px;
+            background-color: #84b7e1;
+            color: white;
+            }
+            
+        QTabWidget {
+            border: 1px solid #6fabdc;
+            border-radius: 6px;
+            background-color: #84b7e1;
+            color: white;
+            }
+        """)
 
         """Combo/Choice boxes"""
         self.choice_box_1 = QtWidgets.QComboBox(self)
-        self.choice_box_1.setGeometry(0, 0, 161, 31)
+        self.choice_box_1.setGeometry(10, 10, 160, 30)
         self.choice_box_1.addItem(NAMES['align_name_1'])
         self.choice_box_1.addItem(NAMES['align_name_2'])
 
         self.choice_box_2 = QtWidgets.QComboBox(self)
-        self.choice_box_2.setGeometry(160, 0, 171, 31)
+        self.choice_box_2.setGeometry(180, 10, 170, 30)
         self.choice_box_2.addItem(NAMES['align_type_1'])
         self.choice_box_2.addItem(NAMES['align_type_2'])
 
         """Tabs"""
         self.align_tab = QtWidgets.QTabWidget(self)
-        self.align_tab.setGeometry(0, 30, 700, 141)
+        self.align_tab.setGeometry(10, 50, 780, 180)
 
         self.tab_1 = QtWidgets.QWidget()
         self.tab_2 = QtWidgets.QWidget()
@@ -205,70 +239,74 @@ class MainWindow(QtWidgets.QMainWindow):
 
         """Tab 1 fill"""
         self.s1 = QtWidgets.QPlainTextEdit(self.tab_1)
-        self.s1.setGeometry(10, 30, 121, 71)
+        self.s1.setGeometry(10, 30, 365, 70)
 
         self.s2 = QtWidgets.QPlainTextEdit(self.tab_1)
-        self.s2.setGeometry(150, 30, 121, 71)
+        self.s2.setGeometry(395, 30, 365, 70)
 
         self.s1_sign = QtWidgets.QLabel(self.tab_1)
-        self.s1_sign.setGeometry(10, 10, 121, 16)
+        self.s1_sign.setGeometry(10, 10, 120, 15)
         self.s1_sign.setText(NAMES['s1_sign'])
 
         self.s2_sign = QtWidgets.QLabel(self.tab_1)
-        self.s2_sign.setGeometry(150, 10, 121, 16)
+        self.s2_sign.setGeometry(395, 10, 120, 15)
         self.s2_sign.setText(NAMES['s2_sign'])
 
         self.count_bt = QtWidgets.QPushButton(self.tab_1)
-        self.count_bt.setGeometry(290, 50, 75, 23)
+        self.count_bt.setGeometry(10, 120, 100, 25)
         self.count_bt.setText(NAMES['count_bt_sign'])
 
         self.status = QtWidgets.QLabel(self.tab_1)
-        self.status.setGeometry(380, 50, 141, 21)
+        self.status.setGeometry(150, 120, 140, 20)
         self.status.setText(NAMES['status_default_sign'])
 
         """Tab 2 fill"""
         self.s = QtWidgets.QPlainTextEdit(self.tab_2)
-        self.s.setGeometry(10, 30, 121, 71)
+        self.s.setGeometry(10, 30, 365, 70)
 
         self.s_sign = QtWidgets.QLabel(self.tab_2)
-        self.s_sign.setGeometry(10, 10, 121, 16)
+        self.s_sign.setGeometry(10, 10, 120, 15)
         self.s_sign.setText(NAMES['s_sign'])
 
+        self.infile_sign = QtWidgets.QLabel(self.tab_2)
+        self.infile_sign.setGeometry(395, 10, 160, 15)
+        self.infile_sign.setText(NAMES['infile_sign'])
+
         self.infile_bt = QtWidgets.QPushButton(self.tab_2)
-        self.infile_bt.setGeometry(140, 50, 101, 23)
+        self.infile_bt.setGeometry(395, 30, 100, 25)
         self.infile_bt.setText(NAMES['infile_bt_sign'])
 
         self.count_bt_2 = QtWidgets.QPushButton(self.tab_2)
-        self.count_bt_2.setGeometry(260, 50, 75, 23)
+        self.count_bt_2.setGeometry(10, 120, 100, 25)
         self.count_bt_2.setText(NAMES['count_bt_sign'])
 
         self.status_2 = QtWidgets.QLabel(self.tab_2)
-        self.status_2.setGeometry(350, 50, 141, 21)
+        self.status_2.setGeometry(150, 120, 140, 20)
         self.status_2.setText(NAMES['status_default_sign'])
 
         self.progress_bar = QtWidgets.QProgressBar(self.tab_2)
-        self.progress_bar.setGeometry(500, 50, 118, 23)
+        self.progress_bar.setGeometry(395, 120, 300, 25)
         self.progress_bar.setMinimum(0)
         self.progress_bar.setValue(0)
 
         """Table"""
         self.table = QtWidgets.QTableView(self)
-        self.table.setMinimumSize(700, 50)
-        self.table.setMaximumSize(700, 200)
-        self.table.setGeometry(0, 170, self.table.maximumWidth(), self.table.maximumHeight())
+        self.table.setMinimumSize(780, 50)
+        self.table.setMaximumSize(780, 200)
+        self.table.setGeometry(10, 240, self.table.maximumWidth(), self.table.maximumHeight())
 
         """Write file"""
         self.write_file_bt = QtWidgets.QPushButton(self)
-        self.write_file_bt.setGeometry(10, 370, 91, 23)
+        self.write_file_bt.setGeometry(10, 450, 91, 23)
         self.write_file_bt.setText(NAMES['write_file_bt_sign'])
 
         """Labels with used align mode and type(in table)"""
         self.used_align_1 = QtWidgets.QLabel(self)
-        self.used_align_1.setGeometry(150, 370, 161, 21)
+        self.used_align_1.setGeometry(150, 450, 161, 21)
         self.used_align_1.setText(NAMES['used_align_default_sign'])
 
         self.used_align_2 = QtWidgets.QLabel(self)
-        self.used_align_2.setGeometry(320, 370, 171, 21)
+        self.used_align_2.setGeometry(320, 450, 171, 21)
         self.used_align_2.setText(NAMES['used_align_default_sign'])
 
     def _other_setup(self):
