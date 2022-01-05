@@ -24,7 +24,7 @@ BLOSUM62_TABLE = {'A': {'A': '4', 'R': '-1', 'N': '-2', 'D': '-2', 'C': '0', 'Q'
                  '*': {'A': '-4', 'R': '-4', 'N': '-4', 'D': '-4', 'C': '-4', 'Q': '-4', 'E': '-4', 'G': '-4', 'H': '-4', 'I': '-4', 'L': '-4', 'K': '-4', 'M': '-4', 'F': '-4', 'P': '-4', 'S': '-4', 'T': '-4', 'W': '-4', 'Y': '-4', 'V': '-4', 'B': '-4', 'Z': '-4', 'X': '-4', '*': '1'}}
 
 NAMES = {
-    'WindowTitle': 'Program',
+    'WindowTitle': 'Выравнивание генетических последовательностей',
 
     'align_name_1': 'Глобальное выравнивание',
     'align_name_2': 'Локальное выравнивание',
@@ -41,14 +41,16 @@ NAMES = {
 
     'count_bt_sign': 'Посчитать',
 
-    'status_default_sign': 'Статус: Работа не начата.',
-    'status_signs': ['Статус: В процессе.', 'Статус: Завершено!'],
+    'status_default_sign': 'Статус: Расчёт не производился',
+    'status_signs': ['Статус: Производится расчёт', 'Статус: Расчёт завершён'],
 
     'infile_bt_sign': 'Выбрать файл',
+    'infile_path_sign': 'Выбран файл: ',
     'infile_bt_menu_sign': 'Open file',
     'write_file_bt_sign': 'Запись в файл',
     'write_file_bt_menu_sign': 'Open file',
-    'used_align_default_sign': 'Ещё нет',
+    'used_align_sign': 'Использованные параметры:',
+    'used_align_default_sign': 'Расчёт не производился',
 
     'infile_default_path': '/',
     'write_file_default_path': '/',

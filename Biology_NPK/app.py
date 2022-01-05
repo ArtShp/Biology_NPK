@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QErrorMessage
 from config import NAMES
@@ -179,40 +179,88 @@ class MainWindow(QtWidgets.QMainWindow):
         """User interface setup"""
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
+        self.setWindowIcon(QtGui.QIcon('../sys/icon.png'))
         self.resize(800, 500)
         self.move(0, 0)
-        self.setStyleSheet("""
+        self.setStyleSheet("""       
         QPushButton {
-          display: inline-block;
-          width: 15em;
-          font-size: 80%;
-          color: rgba(255,255,255);
+          color: white;
           font-weight: bold;
           text-align: center;
           padding: .3em 0;
           border: 1px solid;
           border-color: #60a3d8 #2970a9 #2970a9 #60a3d8;
           border-radius: 6px;
-          background: #60a3d8;
-          box-shadow: inset rgba(255,255,255,.5) 1px 1px;
+          background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                               stop:0 #89bbe2, stop: 0.5 #60a3d8  ,
+                                               stop:1 #378bce);
         }
         QPushButton:hover {
-          background: #9dc7e7;
+            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                               stop:0 #9dc7e7, stop: 0.5 #74afdd ,
+                                               stop:1 #378bce);
         }
-        
-        
+                
         QComboBox {
             border: 1px solid #6fabdc;
             border-radius: 6px;
-            background-color: #84b7e1;
-            color: white;
+            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                               stop:0 #84b7e1, stop: 0.3 #adcfeb,
+                                               stop: 0.7 #d6e7f5, stop:1 #98c3e6);
+            }
+        QComboBox:drop-down {
+            border-top-right-radius: 6px; 
+            border-bottom-right-radius: 6px;
+            }
+        QComboBox:down-arrow {
+             image: url(../sys/down_arrow.png);
+             width: 40px;
+            }
+        QComboBox:down-arrow:on {
+             image: url(../sys/up_arrow.png);
+             width: 40px;
             }
             
-        QTabWidget {
-            border: 1px solid #6fabdc;
-            border-radius: 6px;
-            background-color: #84b7e1;
-            color: white;
+        QTabWidget::pane { /* Рамка виджета со вкладками */
+             border: 1px solid #C2C7CB;
+            }
+        
+        QTabWidget::tab-bar {
+             
+            }
+        QTabBar::tab {
+             background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                         stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+                                         stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+             border: 1px solid #C4C4C3;
+             border-bottom-color: #C2C7CB; /* такой же цвет как у панели */
+             border-top-left-radius: 4px;
+             border-top-right-radius: 4px;
+             padding: 5px 20px 5px 20px;
+            }
+        
+         QTabBar::tab:selected, QTabBar::tab:hover {
+             background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                         stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                         stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+             }
+         QTabBar::tab:selected {
+             border-color: #9B9B9B;
+             border-bottom-color: #C2C7CB; /* такой же цвет как у панели */
+             }
+        
+         QTabBar::tab:!selected {
+             margin-top: 3px; /* делаем невыбранные вкладки меньше */
+            }
+
+                     
+        QHeaderView:section {
+             background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                                               stop:0 #84b7e1, stop: 0.3 #adcfeb,
+                                               stop: 0.7 #d6e7f5, stop:1 #98c3e6);
+             color: #143652;
+             padding-left: 4px;
+             border: 1px solid #5b9fd7;
             }
         """)
 
@@ -257,7 +305,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.count_bt.setText(NAMES['count_bt_sign'])
 
         self.status = QtWidgets.QLabel(self.tab_1)
-        self.status.setGeometry(150, 120, 140, 20)
+        self.status.setGeometry(150, 120, 200, 20)
         self.status.setText(NAMES['status_default_sign'])
 
         """Tab 2 fill"""
@@ -272,6 +320,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.infile_sign.setGeometry(395, 10, 160, 15)
         self.infile_sign.setText(NAMES['infile_sign'])
 
+        self.infile_path_sign = QtWidgets.QLabel(self.tab_2)
+        self.infile_path_sign.setGeometry(395, 60, 160, 40)
+        self.infile_path_sign.setHidden(True)
+
         self.infile_bt = QtWidgets.QPushButton(self.tab_2)
         self.infile_bt.setGeometry(395, 30, 100, 25)
         self.infile_bt.setText(NAMES['infile_bt_sign'])
@@ -281,7 +333,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.count_bt_2.setText(NAMES['count_bt_sign'])
 
         self.status_2 = QtWidgets.QLabel(self.tab_2)
-        self.status_2.setGeometry(150, 120, 140, 20)
+        self.status_2.setGeometry(150, 120, 200, 20)
         self.status_2.setText(NAMES['status_default_sign'])
 
         self.progress_bar = QtWidgets.QProgressBar(self.tab_2)
@@ -297,16 +349,20 @@ class MainWindow(QtWidgets.QMainWindow):
 
         """Write file"""
         self.write_file_bt = QtWidgets.QPushButton(self)
-        self.write_file_bt.setGeometry(10, 450, 91, 23)
+        self.write_file_bt.setGeometry(10, 450, 120, 25)
         self.write_file_bt.setText(NAMES['write_file_bt_sign'])
 
         """Labels with used align mode and type(in table)"""
+        self.used_align_sign = QtWidgets.QLabel(self)
+        self.used_align_sign.setGeometry(150, 450, 170, 20)
+        self.used_align_sign.setText(NAMES['used_align_sign'])
+
         self.used_align_1 = QtWidgets.QLabel(self)
-        self.used_align_1.setGeometry(150, 450, 161, 21)
+        self.used_align_1.setGeometry(320, 450, 170, 20)
         self.used_align_1.setText(NAMES['used_align_default_sign'])
 
         self.used_align_2 = QtWidgets.QLabel(self)
-        self.used_align_2.setGeometry(320, 450, 171, 21)
+        self.used_align_2.setGeometry(490, 450, 170, 20)
         self.used_align_2.setText(NAMES['used_align_default_sign'])
 
     def _other_setup(self):
@@ -381,6 +437,10 @@ class MainWindow(QtWidgets.QMainWindow):
     def choose_input_file(self):
         self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
         #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], NAMES['infile_default_path'], "Text file (*.txt)")[0]
+        if self.input_file:
+            self.infile_path_sign.setHidden(False)
+            self.infile_path_sign.setText(NAMES['infile_path_sign']+self.input_file[self.input_file.rfind('/')+1:])
+            self.infile_path_sign.adjustSize()
 
     def write_file(self):
         if not self.is_running:
