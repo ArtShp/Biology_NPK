@@ -4,7 +4,7 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QErrorMessage
-from config import NAMES
+from config import NAMES, STYLE
 from functions import *
 from xlsxwriter import Workbook
 from xlsxwriter.exceptions import FileCreateError
@@ -182,87 +182,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowIcon(QtGui.QIcon('../sys/icon.png'))
         self.resize(800, 500)
         self.move(0, 0)
-        self.setStyleSheet("""       
-        QPushButton {
-          color: white;
-          font-weight: bold;
-          text-align: center;
-          padding: .3em 0;
-          border: 1px solid;
-          border-color: #60a3d8 #2970a9 #2970a9 #60a3d8;
-          border-radius: 6px;
-          background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                               stop:0 #89bbe2, stop: 0.5 #60a3d8  ,
-                                               stop:1 #378bce);
-        }
-        QPushButton:hover {
-            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                               stop:0 #9dc7e7, stop: 0.5 #74afdd ,
-                                               stop:1 #378bce);
-        }
-                
-        QComboBox {
-            border: 1px solid #6fabdc;
-            border-radius: 6px;
-            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                               stop:0 #84b7e1, stop: 0.3 #adcfeb,
-                                               stop: 0.7 #d6e7f5, stop:1 #98c3e6);
-            }
-        QComboBox:drop-down {
-            border-top-right-radius: 6px; 
-            border-bottom-right-radius: 6px;
-            }
-        QComboBox:down-arrow {
-             image: url(../sys/down_arrow.png);
-             width: 40px;
-            }
-        QComboBox:down-arrow:on {
-             image: url(../sys/up_arrow.png);
-             width: 40px;
-            }
-            
-        QTabWidget::pane { /* Рамка виджета со вкладками */
-             border: 1px solid #C2C7CB;
-            }
-        
-        QTabWidget::tab-bar {
-             
-            }
-        QTabBar::tab {
-             background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                         stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-                                         stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
-             border: 1px solid #C4C4C3;
-             border-bottom-color: #C2C7CB; /* такой же цвет как у панели */
-             border-top-left-radius: 4px;
-             border-top-right-radius: 4px;
-             padding: 5px 20px 5px 20px;
-            }
-        
-         QTabBar::tab:selected, QTabBar::tab:hover {
-             background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                         stop: 0 #fafafa, stop: 0.4 #f4f4f4,
-                                         stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
-             }
-         QTabBar::tab:selected {
-             border-color: #9B9B9B;
-             border-bottom-color: #C2C7CB; /* такой же цвет как у панели */
-             }
-        
-         QTabBar::tab:!selected {
-             margin-top: 3px; /* делаем невыбранные вкладки меньше */
-            }
-
-                     
-        QHeaderView:section {
-             background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                                               stop:0 #84b7e1, stop: 0.3 #adcfeb,
-                                               stop: 0.7 #d6e7f5, stop:1 #98c3e6);
-             color: #143652;
-             padding-left: 4px;
-             border: 1px solid #5b9fd7;
-            }
-        """)
+        self.setStyleSheet(STYLE)
 
         """Combo/Choice boxes"""
         self.choice_box_1 = QtWidgets.QComboBox(self)
