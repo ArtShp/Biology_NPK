@@ -1,17 +1,12 @@
-from random import randint
+import base64
 
-x = open('C:/Users/user/Desktop/Biology_NPK/input/input_long.txt', 'w+')
-arr = 'ARNDCQEGHILKMFPSTWYVBZX'
+with open('../sys/images/up_arrow.png', 'rb') as imagefile:
+    base64string = base64.b64encode(imagefile.read()).decode('ascii')
 
-amount = 100
-length = 300
+print(base64string)  # print base64string to console
+# Will look something like:
+# iVBORw0KGgoAAAANS  ...  qQMAAAAASUVORK5CYII=
 
-for i in range(amount):
-    s = ''
-    for k in range(length):
-        s += arr[randint(0, len(arr)-1)]
-    x.write(s)
-    if i+1 != amount:
-        x.write('\n')
-
-x.close()
+# or save it to a file
+with open('testfile.txt', 'w') as outputfile:
+    outputfile.write(base64string)

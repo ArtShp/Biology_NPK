@@ -4,10 +4,11 @@ import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMessageBox, QErrorMessage
-from config import NAMES, STYLE
+from config import NAMES, STYLE, IMAGES
 from functions import *
 from xlsxwriter import Workbook
 from xlsxwriter.exceptions import FileCreateError
+import base64
 
 
 class CalcHandler(QtCore.QObject):
@@ -179,7 +180,13 @@ class MainWindow(QtWidgets.QMainWindow):
         """User interface setup"""
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
-        self.setWindowIcon(QtGui.QIcon('../sys/icon.png'))
+        #self.setWindowIcon(QtGui.QIcon('../sys/images/program_icon.png'))
+        pm = QtGui.QPixmap()
+        pm.loadFromData(base64.b64decode(IMAGES['program_icon']))
+        icon = QtGui.QIcon()
+        icon.addPixmap(pm)
+
+        self.setWindowIcon(icon)
         self.resize(800, 500)
         self.move(0, 0)
         self.setStyleSheet(STYLE)
@@ -263,9 +270,10 @@ class MainWindow(QtWidgets.QMainWindow):
 
         """Table"""
         self.table = QtWidgets.QTableView(self)
-        self.table.setMinimumSize(780, 50)
-        self.table.setMaximumSize(780, 200)
+        self.table.setMinimumSize(782, 50)
+        self.table.setMaximumSize(782, 200)
         self.table.setGeometry(10, 240, self.table.maximumWidth(), self.table.maximumHeight())
+        self.table.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.Stretch)
 
         """Write file"""
         self.write_file_bt = QtWidgets.QPushButton(self)
@@ -294,7 +302,9 @@ class MainWindow(QtWidgets.QMainWindow):
         """Table data setup"""
         self.model = TableModel()  # Data model for table
         self.table.setModel(self.model)  # Set table data model
-        self.table.resizeColumnsToContents()  # Resize columns to headers content width
+        self.table.setColumnWidth(0, 350)
+        self.table.setColumnWidth(1, 350)
+        self.table.setColumnWidth(2, 80)
 
         """Creating thread for calculating operations"""
         self.worker = CalcHandler()
@@ -355,8 +365,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table.repaint()
 
     def choose_input_file(self):
-        self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
-        #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], NAMES['infile_default_path'], "Text file (*.txt)")[0]
+        #self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], "C:/Users/Admin/PycharmProjects/Biology_NPK/input", "Text file (*.txt)")[0]
+        self.input_file = QtWidgets.QFileDialog.getOpenFileName(self, NAMES['infile_bt_menu_sign'], NAMES['infile_default_path'], "Text file (*.txt)")[0]
         if self.input_file:
             self.infile_path_sign.setHidden(False)
             self.infile_path_sign.setText(NAMES['infile_path_sign']+self.input_file[self.input_file.rfind('/')+1:])
@@ -365,8 +375,8 @@ class MainWindow(QtWidgets.QMainWindow):
     def write_file(self):
         if not self.is_running:
             if self.model.get_data():
-                f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
-                #f_name = QtWidgets.QFileDialog.getSaveFileName(self, NAMES['write_file_bt_menu_sign'], NAMES['write_file_default_path']+NAMES['write_file_default_name'], "Excel File (*.xlsx)")[0]
+                #f_name = 'C:/Users/Admin/PycharmProjects/Biology_NPK/output/res.xlsx'
+                f_name = QtWidgets.QFileDialog.getSaveFileName(self, NAMES['write_file_bt_menu_sign'], NAMES['write_file_default_path']+NAMES['write_file_default_name'], "Excel File (*.xlsx)")[0]
                 if f_name:
                     self.is_running = True
                     data = self.model.get_data()
@@ -459,7 +469,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.table.setModel(self.model)
         self.table.repaint()
 
-        self.table.resizeColumnsToContents()
         self.table.resizeRowsToContents()
         self.table.adjustSize()
 
