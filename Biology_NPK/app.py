@@ -387,7 +387,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
                     wb = Workbook(f_name)
                     ws1 = wb.add_worksheet('Shorted')
-                    #ws2 = wb.add_worksheet('Full')
+                    ws2 = wb.add_worksheet('Full')
 
                     title_f = wb.add_format({'font_size': 18, 'align': 'center'})
                     subtitle_f = wb.add_format({'font_size': 14, 'align': 'center'})
@@ -395,29 +395,42 @@ class MainWindow(QtWidgets.QMainWindow):
                     data_f = wb.add_format({})
 
                     ws1.set_column_pixels('N:N', 85)
+                    ws2.set_column_pixels('N:N', 85)
 
                     ws1.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Сокращённо)', title_f)
-                    #ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
+                    ws2.merge_range('A1:N1', 'Результат выравнивания генетических последовательностей (Полностью)', title_f)
 
                     ws1.merge_range('A2:G2', self.used_align_1.text(), subtitle_f)
                     ws1.merge_range('H2:N2', self.used_align_2.text(), subtitle_f)
+                    ws2.merge_range('A2:G2', self.used_align_1.text(), subtitle_f)
+                    ws2.merge_range('H2:N2', self.used_align_2.text(), subtitle_f)
 
                     ws1.write('A3', 'ID', subtitle_f)
                     ws1.merge_range('B3:G3', 'Последовательность 1', subtitle_f)
                     ws1.merge_range('H3:M3', 'Последовательность 2', subtitle_f)
                     ws1.write('N3', 'Результат', subtitle_f)
+                    ws2.write('A3', 'ID', subtitle_f)
+                    ws2.merge_range('B3:G3', 'Последовательность 1', subtitle_f)
+                    ws2.merge_range('H3:M3', 'Последовательность 2', subtitle_f)
+                    ws2.write('N3', 'Результат', subtitle_f)
 
                     for i in range(len(data)):
                         ws1.write(f'A{4+i}', i+1, data_f)
-                        if len(data[i][0]) <= 50:
+                        if len(data[i][0]) <= 40:
                             ws1.merge_range(f'B{4+i}:G{4+i}', data[i][0], data_f)
                         else:
-                            ws1.merge_range(f'B{4+i}:G{4+i}', data[i][0][:50]+'...', data_f)
-                        if len(data[i][1]) <= 50:
+                            ws1.merge_range(f'B{4+i}:G{4+i}', data[i][0][:40]+'...', data_f)
+                        if len(data[i][1]) <= 40:
                             ws1.merge_range(f'H{4+i}:M{4+i}', data[i][1], data_f)
                         else:
-                            ws1.merge_range(f'H{4+i}:M{4+i}', data[i][1][:50]+'...', data_f)
+                            ws1.merge_range(f'H{4+i}:M{4+i}', data[i][1][:40]+'...', data_f)
                         ws1.write(f'N{4+i}', data[i][2], data_f)
+
+                    for i in range(len(data)):
+                        ws2.write(f'A{4+i}', i+1, data_f)
+                        ws2.merge_range(f'B{4+i}:G{4+i}', data[i][0], data_f)
+                        ws2.merge_range(f'H{4+i}:M{4+i}', data[i][1], data_f)
+                        ws2.write(f'N{4+i}', data[i][2], data_f)
 
                     try:
                         wb.close()
@@ -437,6 +450,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _error_message(self, error_text, error_description=None, error_details=None):
         error = QMessageBox()
         error.setWindowTitle(NAMES['error_message_title'])
+        error.setWindowIcon(QtGui.QIcon('resources/images/program_icon.png'))
         error.setIcon(QMessageBox.Icon.Warning)
 
         error.setText(error_text)
