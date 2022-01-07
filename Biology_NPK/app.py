@@ -180,14 +180,18 @@ class MainWindow(QtWidgets.QMainWindow):
         """User interface setup"""
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
-        #self.setWindowIcon(QtGui.QIcon('../sys/images/program_icon.png'))
+        self.setWindowIcon(QtGui.QIcon('resources/images/program_icon.png'))
+
+        """
         pm = QtGui.QPixmap()
         pm.loadFromData(base64.b64decode(IMAGES['program_icon']))
         icon = QtGui.QIcon()
         icon.addPixmap(pm)
-
         self.setWindowIcon(icon)
-        self.resize(800, 500)
+        """
+
+        #self.resize(800, 500)
+        self.setFixedSize(800, 500)
         self.move(0, 0)
         self.setStyleSheet(STYLE)
 
