@@ -6,18 +6,9 @@ def _count_cell_score(s1: str, s2: str, mode: int = 0) -> Optional[int]:
     """Функция для подсчёта стоимости текущей ячейки."""
     """ВАЖНО! Передаются только символы, а не строки"""
 
-    """
-    if len(s1) != 1 or len(s2) != 1 or mode not in [0, 1]:
-        return None
-    """
-
     if mode == 0:
         """Используем BLOSUM62"""
-        try:
-            return int(BLOSUM62_TABLE[s1][s2])
-        except KeyError:
-            # TODO -> Делать что-то другое. Возможно добавить свой обработчик ошибок!
-            return None
+        return int(BLOSUM62_TABLE[s1][s2])  # Возвращаем значение из таблицы
     elif mode == 1:
         """Используем базовую схему"""
         if '*' in [s1, s2]:
@@ -26,23 +17,13 @@ def _count_cell_score(s1: str, s2: str, mode: int = 0) -> Optional[int]:
             return 1
         else:
             return -1
-    """
-    else:
-        # TODO -> Делать что-то другое. Возможно добавить свой обработчик ошибок!
-        return None
-    """
 
 
 def sequence_global_alignment(s1: str, s2: str, mode: int = 0) -> Optional[int]:
     """Функция глобального выравнивания двух генетических цепочек
        по алгоритму Нидлмана-Вунша"""
 
-    """
-    if mode not in [0, 1]:
-        # TODO -> Делать что-то другое. Возможно добавить свой обработчик ошибок!
-        return None
-    """
-
+    """Инициализация и заполнение таблицы"""
     table = [[0 for k in range(len(s2)+1)] for i in range(len(s1)+1)]
 
     table[0][0] = 0
@@ -64,11 +45,7 @@ def sequence_local_alignment(s1: str, s2: str, mode: int = 0) -> Optional[int]:
     """Функция глокального выравнивания двух генетических цепочек
        по алгоритму Смита-Ватермана"""
 
-    """
-    if mode not in [0, 1]:
-        return None
-    """
-
+    """Инициализация и заполнение таблицы"""
     table = [[0 for k in range(len(s2)+1)] for i in range(len(s1)+1)]
 
     table[0][0] = 0

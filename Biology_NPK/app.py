@@ -49,7 +49,7 @@ class CalcHandler(QtCore.QObject):
                     self.show_data.emit([s1, s2, res])
 
                     self.change_status.emit(1, False)
-                except TypeError:
+                except KeyError:
                     self.change_status.emit(1, False)
                     self.input_data_error.emit()
             else:
@@ -86,7 +86,7 @@ class CalcHandler(QtCore.QObject):
                     file.close()
 
                     self.change_status.emit(1, True)
-                except TypeError:
+                except KeyError:
                     file.close()
                     self.change_status.emit(1, True)
                     self.input_data_error.emit()
@@ -359,9 +359,9 @@ class MainWindow(QtWidgets.QMainWindow):
                         print('Warning -> No file chosen!')
             else:
                 print('Warning -> Process is running now!')
-        except TypeError:
+        except KeyError:
             print('Error -> Input data is incorrect!')
-            self._error_message('Ошибка при расчёте результата!', 'Введённые данные неверны.')
+            self._error_message('Ошибка при расчёте результата!', 'Введённые данные некорректны.')
 
     def clear_table(self):
         self.model.clear()
