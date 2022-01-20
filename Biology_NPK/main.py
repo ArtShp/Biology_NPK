@@ -12,7 +12,7 @@ res2 = sequence_local_alignment(s1, s2, score_mode)
 print(res1, end='\n\n')
 print(res2)
 """
-f = open('../sys/blosum62.txt', 'r+')
+f = open('../resources/blosum62.txt', 'r+')
 s = f.read()
 s = s.strip().split('\n')
 

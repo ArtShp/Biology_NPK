@@ -3,12 +3,12 @@ import sys
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QMessageBox, QErrorMessage
-from config import NAMES, STYLE, IMAGES
-from functions import *
+from PyQt5.QtWidgets import QMessageBox
 from xlsxwriter import Workbook
 from xlsxwriter.exceptions import FileCreateError
-import base64
+
+from config import NAMES, STYLE
+from functions import *
 
 
 class CalcHandler(QtCore.QObject):
@@ -180,15 +180,7 @@ class MainWindow(QtWidgets.QMainWindow):
         """User interface setup"""
         """Main window"""
         self.setWindowTitle(NAMES['WindowTitle'])
-        self.setWindowIcon(QtGui.QIcon('resources/images/program_icon.png'))
-
-        """
-        pm = QtGui.QPixmap()
-        pm.loadFromData(base64.b64decode(IMAGES['program_icon']))
-        icon = QtGui.QIcon()
-        icon.addPixmap(pm)
-        self.setWindowIcon(icon)
-        """
+        self.setWindowIcon(QtGui.QIcon('../resources/images/program_icon.png'))
 
         #self.resize(800, 500)
         self.setFixedSize(800, 500)
